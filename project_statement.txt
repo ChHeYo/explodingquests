@@ -1,0 +1,20 @@
+
+
+
+It's a job board/service board that lists out 'quests' that people can undertake.
+Every job board has a timer that, upon expiration, explodes the quest.
+The site's look and feel should simulate quests in games.
+
+People would be referred as NPC.
+
+I would need to:
+
+    1. list of quests (listview) and detailviews of each quest
+        a. fields = (title, objectives, rewards, npc_id, image(option), timer, slug)
+    2. geolocation plugin so that when people login,
+       they can see quests posted by people living nearby.
+    3. login and logout
+    4. registration
+	a. Use registration-redux to take care of this task (email activation)
+    5. filter (new, hot, random, etc)
+    6. about, contact us, terms of agreement
