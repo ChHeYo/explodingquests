@@ -16,10 +16,19 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from quests.views import HomePageTemplateView
+from django.views.generic import TemplateView
+from quests.views import (
+    HomePageTemplateView, CreateQuest,
+    QuestListView, QuestDetailView,
+    DeleteQuestView, UpdateQuestView,
+)
 
 urlpatterns = [
-    url(r'^$', HomePageTemplateView.as_view(), name='homepage'),
+    url(r'^$', QuestListView.as_view(), name='homepage'),
+    url(r'^(?P<slug>[\w-]+)/$', QuestDetailView.as_view(), name='quest_detail'),
+    url(r'^update/(?P<slug>[\w-]+)/$', UpdateQuestView.as_view(), name='update_quest'),
+    url(r'^delete/(?P<slug>[\w-]+)/$', DeleteQuestView.as_view(), name='delete_quest'),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^accounts/create/$', CreateQuest.as_view(), name='create_quest'),
     url(r'^admin/', admin.site.urls),
 ]

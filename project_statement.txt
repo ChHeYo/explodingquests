@@ -14,7 +14,7 @@ I would need to:
     2. geolocation plugin so that when people login,
        they can see quests posted by people living nearby.
     3. login and logout
-    4. registration
-	a. Use registration-redux to take care of this task (email activation)
+    4. registration (Used allauth to take care of this task)
+	    a.  (email activation)
     5. filter (new, hot, random, etc)
     6. about, contact us, terms of agreement

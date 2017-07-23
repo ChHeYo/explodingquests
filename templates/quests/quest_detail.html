@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+{% block content %}
+<div class='container detail-container'>
+    <div class="row">
+        <div class='col-md-3 justify-center'>
+            <div class='thumbnail'>
+                <img class='image-size' src="{% static 'image/stockimage.png' %}"/>
+                    <div class='caption'>
+                        <h4>{{ object.npc.username }}</h4>
+                    </div>
+            </div>
+        </div>
+        <div class='col-md-9'>
+            <div class='thumbnail quest-detail-page'>
+                <p>{{ object.title|title}}</p>
+                <p>{{ object.description }}</p>
+                <p>{{ object.rewards }}</p>
+                <p>Created: {{ object.date_created }}</p>
+                <p>Modified: {{ object.date_modified }}</p>
+                <p>Detonation Date: {{ object.explosion_date }}</p>
+            </div>
+            {% if request.user == quest.npc %}
+                 <div class='right-aligned'>
+                    <a class='btn btn-warning' type='button' href="{% url 'update_quest' object.slug %}">
+                        Modify
+                    </a>
+                    <a class='btn btn-danger' type='button' href="{% url 'delete_quest' object.slug %}">
+                        Delete
+                    </a>
+                 </div> 
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

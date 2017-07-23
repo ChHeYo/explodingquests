@@ -1,18 +1,90 @@
 body {
     padding-top: 50px;
-    background-color: lightblue;
+    padding-bottom: 10px;
+    background-color: #ececec;
+}
+
+a {
+    color: black;
+}
+
+a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.image-size {
+    width: 250px;
+    height: 200px;
+}
+
+.btn-margin {
+    margin-top: 30px;
+}
+
+.caption {
+    padding-bottom: 4px;
+}
+
+.detail-container {
+    padding-top: 50px;
+}
+
+.explosion_color {
+    color: #660000;
+    font-weight: bold;
+}
+
+.footer {
+    /* position: absolute; */
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    text-align: center;
+}
+
+.footnote {
+    margin-top: 20px;
+}
+
+.justify-center {
+    text-align: center;
 }
 
 .jumbotron {
     text-align: center;
+    background-color: #F6B12E;
+    color: white;
+}
+
+.red-fire {
+    color: red;
+}
+
+.right-aligned {
+    float: right;
 }
 
 .signup_text {
     background-color: white;
-    margin-top: 100px;
+    margin-top: 50px;
     padding: 50px;
     text-align: center;
-    
+}
+
+.thumbnail {
+    padding-top:8px;
+}
+
+.quest-detail-page {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#navbar-searchform {
+    width: 300px;
 }
 
 

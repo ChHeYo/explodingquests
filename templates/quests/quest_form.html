@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+{% block content %}
+    <div class='container detail-container'>
+        <div class='row'>
+            <div class='col-md-offset-2 col-md-8'>
+                <form method='POST'>
+                    {{ form|bootstrap }}
+                    {% csrf_token %}
+                    <input class='btn btn-success btn-lg btn-block btn-margin' type='submit' value='Quest'>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head_title %}
+    {% trans 'Delete A Quest' %}
+{% endblock %}
+
+{% block content %}
+<div class="container signup_text">
+    <div class='row'>
+        <div class='col-md-offset-4 col-md-4'>
+            <h1>{% trans "Delete A Quest" %}</h1>
+
+            <p>{% trans 'Are you sure you want to delete this quest?' %}</p>
+
+            <form method="post">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <button class='btn btn-danger btn-lg btn-block btn-margin' type="submit">
+                {% trans 'Delete' %}
+            </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

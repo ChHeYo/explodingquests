@@ -1,10 +1,42 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load bootstrap %}
 {% block content %}
     <div class='jumbotron'>
          <div class='container'>
-            <p class='h1'>Explore Your Quests</p>
-            <p class='lead'>Job & Gig Post With Timer </p>
-         </div> 
+            <p class='h1'>The world is full of quests</p>
+            <p class='lead'>Get your quests before they explode!</p>
+         </div>
     </div>
+    <div class='container'>
+        <div class='row'>
+            {% for quest in object_list %}
+            <a href="{% url 'quest_detail' quest.slug %}">
+                <div class='col-md-3 justify-center quest-list'>
+                    <div class='thumbnail'>
+                        <img class='image-size' src="{% static 'image/stockimage.png' %}"/>
+                        <div class='caption'>
+                            <h4>{{ quest.title }}</h4>
+                            <p>{{ quest.description|truncatewords:15 }}</p>
+                            <p><span class='glyphicon glyphicon-usd'></span> {{ quest.rewards }}</p>
+                            <p><span class='glyphicon glyphicon-fire red-fire'></span> {{ quest.explosion_date }}</p>
+                            <a href="{% url 'quest_detail' quest.slug %}"
+                            class="btn btn-primary" role="button">View More</a> 
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+                <p>No Quest yet</p>
+            {% endfor %}
+        </div>
+    </div>
+    <footer class='footer'>
+        <div class='container'>
+            <p>
+                &copy; 2017 ExplodingQuests, Inc.
+            </p>
+        </div>
+    </footer>
 {% endblock %}
+
