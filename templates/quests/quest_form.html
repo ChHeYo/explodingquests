@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load bootstrap %}
 {% block content %}
-    <div class='container detail-container'>
+    <div class='container quest-form-container'>
         <div class='row'>
             <div class='col-md-offset-2 col-md-8'>
                 <form method='POST'>
-                    {{ form|bootstrap }}
+                     {{ form|bootstrap }} 
                     {% csrf_token %}
-                    <input class='btn btn-success btn-lg btn-block btn-margin' type='submit' value='Quest'>
+                    <input class='btn btn-success btn-lg btn-block btn-margin btn-margin-bot' type='submit' value='POST'>
                 </form>
             </div>
         </div>

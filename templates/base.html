@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
         integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
         <!-- Any custom css -->
-        <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
         {% block header %}{% endblock %}
     </head>
     <body>
@@ -50,13 +50,24 @@
                         <li class='dropdown'>
                             <a class="dropdown-toggle" role='button'
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class='glyphicon glyphicon-user'></span>
-                                <span class="caret"></span>
+                                <span class='glyphicon glyphicon-user'></span>&nbsp;
+                                <span>{{ user.username }}</span>
+                                <span class="caret"></span> 
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">{{ request.user }}</a></li>
-                                <li><a href="{% url 'create_quest' %}">Post a Quest</a></li>
-                                <li><a href="{% url 'account_logout' %}">Logout</a></li>
+                                <li class='dropdown-menu-options'>
+                                    <a href="{% url 'user_profile' %}">
+                                        <span class="glyphicon glyphicon-cog"></span>&nbsp; Settings
+                                    </a>
+                                </li>
+                                <li><a href="{% url 'create_quest' %}">
+                                    <span class="glyphicon glyphicon-pencil"></span>&nbsp; Post a Quest
+                                    </a>
+                                </li>
+                                <li><a href="{% url 'account_logout' %}">
+                                    <span class='glyphicon glyphicon-log-out'></span>&nbsp; Logout
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         {% else %}
