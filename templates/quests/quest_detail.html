@@ -6,7 +6,9 @@
     <div class="row">
         <div class='col-md-3 justify-center'>
             <div class='thumbnail'>
-                <img class='image-size image-margin-top' src="{% static 'image/stockimage.png' %}"/>
+                {% for thumbnail in object.uploads.all %}
+                    <img class='image-size image-margin-top' src="{{ thumbnail.image.url }}"/>
+                {% endfor %}
                     <div class='caption'>
                         <h4>{{ object.user.username }}</h4>
                     </div>

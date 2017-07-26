@@ -14,7 +14,9 @@
             <a href="{% url 'quest_detail' quest.slug %}">
                 <div class='col-md-3 justify-center quest-list'>
                     <div class='thumbnail'>
-                        <img class='image-size' src="{% static 'image/stockimage.png' %}"/>
+                        {% for thumbnail in quest.uploads.all %}
+                            <img class='image-size' src="{{ thumbnail.image.url }}"/>
+                        {% endfor %}
                         <div class='caption'>
                             <h4>{{ quest.title }}</h4>
                             <p>{{ quest.description|truncatewords:15 }}</p>

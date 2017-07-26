@@ -88,3 +88,12 @@ def quest_pre_save_receiver(sender, instance, *args, **kwargs):
         instance.slug = unique_slug_generator(instance)
 
 pre_save.connect(quest_pre_save_receiver, sender=Quest)
+
+
+def get_image_path(instance, filename):
+    return '/'.join(['quest_images', instance.quest.slug, filename])
+
+
+class Upload(models.Model):
+    quest = models.ForeignKey(Quest, related_name='uploads')
+    image = models.ImageField(upload_to=get_image_path)
