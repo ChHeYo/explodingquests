@@ -1,31 +1,50 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load bootstrap %}
+
+{% block title %}
+    {{ block.super }} - {{ quest.title }}   
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/quest_detail.css' %}">
+{% endblock stylesheets %}
+
 {% block content %}
-<div class='container detail-container'>
+<div class='container'>
     <div class="row">
         <div class='col-md-3 justify-center'>
             <div class='thumbnail'>
-                {% for thumbnail in object.uploads.all %}
-                    <img class='image-size image-margin-top' src="{{ thumbnail.image.url }}"/>
-                {% endfor %}
-                    <div class='caption'>
-                        <h4>{{ object.user.username }}</h4>
-                    </div>
+                {% with pro_img=profile_picture.profile_image %}
+                    {% if pro_img %}
+                        <a href="{% url 'selected_user_list' quest.user.username %}"> 
+                            <img class='image-size image-margin-top' src="{{ pro_img.url }}" alt='profile-image'>
+                        </a>
+                    {% else %}
+                        <a href="#">
+                            <img src='' alt='stock image'>
+                        </a>
+                    {% endif %}
+                {% endwith %}
+                <div class='caption'>
+                    <h4>{{ quest.user.username }}</h4>
+                </div>
             </div>
         </div>
         <div class='col-md-9'>
             <div class='thumbnail quest-detail-page'>
-                <p class='bold-title h4'>"{{ object.title|title }}"</p>
+                <p class='bold-title h4'>"{{ quest.title|title }}"</p>
                 <br/>
-                <p>{{ object.description|capfirst }}</p>
-                <p>{{ object.rewards }}</p>
-                <p class='justify-right'>Created: {{ object.date_created }}</p>
-                <p class='justify-right'>Modified: {{ object.date_modified }}</p>
-                 <p class='justify-right'>Detonation Date: {{ object.explosion_date }}</p> 
+                <p>{{ quest.description|capfirst }}</p>
+                <p>{{ quest.reward_type }}</p>
+                <p>{{ quest.rewards }}</p>
+                {% comment %} <p class='justify-right'>Created: {{ quest.date_created }}</p>
+                <p class='justify-right'>Modified: {{ quest.date_modified }}</p> {% endcomment %}
+                <p class='justify-right'>Explode in {{ quest.explosion_date|timeuntil }}</p> 
             </div>
             {% if request.user == quest.user %}
-                 <div class='right-aligned'>
+                 <div class='right-aligned-buttons'>
                     <a class='btn btn-warning' type='button' href="{% url 'update_quest' object.slug %}">
                         Modify
                     </a>
@@ -38,3 +57,7 @@
     </div>
 </div>
 {% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

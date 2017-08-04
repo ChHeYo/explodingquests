@@ -1,27 +1,43 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load bootstrap %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
 {% block content %}
     <div class='jumbotron'>
          <div class='container'>
             <p class='h1'>The world is full of quests</p>
-            <p class='lead'>Get your quests before they explode!</p>
+            <p class='lead'>Get them before they explode!</p>
          </div>
     </div>
     <div class='container'>
         <div class='row'>
-            {% for quest in object_list %}
+            {% for quest in quest_list %}
             <a href="{% url 'quest_detail' quest.slug %}">
                 <div class='col-md-3 justify-center quest-list'>
                     <div class='thumbnail'>
-                        {% for thumbnail in quest.uploads.all %}
-                            <img class='image-size' src="{{ thumbnail.image.url }}"/>
-                        {% endfor %}
+                        {% with pro_img=quest.user.profile.profile_image %}
+                            {% if pro_img %}
+                                <img class='image-size' src="{{ pro_img.url }}"/>
+                            {% endif %}
+                        {% endwith %}
                         <div class='caption'>
                             <h4>{{ quest.title }}</h4>
-                            <p>{{ quest.description|truncatewords:15 }}</p>
-                            <p><span class='glyphicon glyphicon-usd'></span> {{ quest.rewards }}</p>
-                            <p><span class='glyphicon glyphicon-fire red-fire'></span> {{ quest.explosion_date }}</p>
+                            <p>{{ quest.description|truncatewords:10 }}</p>
+                            {% if quest.reward_type == "Monetary" %}
+                                <p><span class='dollar-color'>$</span> {{ quest.rewards }}</p>
+                            {% else %}
+                                <p>{{ quest.rewards }}</p>
+                            {% endif %}
+                            <p><span class='glyphicon glyphicon-fire red-fire'></span> 
+                                {{ quest.explosion_date|timeuntil }}</p>
                             <a href="{% url 'quest_detail' quest.slug %}"
                             class="btn btn-primary" role="button">View More</a> 
                         </div>
@@ -41,4 +57,8 @@
         </div>
     </footer>
 {% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}
 

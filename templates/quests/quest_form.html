@@ -1,16 +1,31 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load bootstrap %}
+
+{% block title %}
+    {{ block.super }} - Post
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <!-- for padding top -->
+    <link rel='stylesheet' type='text/css' href="{% static 'css/profile_page.css' %}">
+{% endblock stylesheets %}
+
 {% block content %}
-    <div class='container quest-form-container'>
+    <div class='container'>
         <div class='row'>
             <div class='col-md-offset-2 col-md-8'>
                 <form method='POST'>
-                     {{ form|bootstrap }} 
+                    {{ form|bootstrap }}
                     {% csrf_token %}
-                    <input class='btn btn-success btn-lg btn-block btn-margin btn-margin-bot' type='submit' value='POST'>
+                    <input class='btn btn-success btn-lg btn-block btn-margin' type='submit' value='POST'>
                 </form>
             </div>
         </div>
     </div>
 {% endblock %}
 
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

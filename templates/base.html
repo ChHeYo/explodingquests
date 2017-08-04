@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-{% load static %}
+{% load staticfiles %}
 {% load bootstrap %}
 <html lang='en'>
     <head>
         <meta charset="utf-8">
-        <title>ExplodingQuests</title>
-        <!-- Bootstrap -->
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-        <!-- Any custom css -->
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        {% block header %}{% endblock %}
+        <title>
+            {% block title %}ExplodingQuest{% endblock title %}
+        </title>
+        {% block stylesheets %}
+            <!-- Bootstrap -->
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+            <!-- Optional theme -->
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+            integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+            <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+        {% endblock stylesheets %}
     </head>
     <body>
         <!-- Navigation -->
@@ -30,7 +31,7 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a class='navbar-brand' href="{% url 'homepage' %}">
-                         <span class='explosion_color'>Exploding</span><span class='quest'>Quests</span> 
+                         <span class='explosion_color'>Exploding</span><span class='quest'>Quest</span> 
                     </a>
                 </div>
 
@@ -46,26 +47,37 @@
                         </div>
                     </form>
                     <ul class='nav navbar-nav navbar-right'>
-                        {% if request.user.is_authenticated %}
+                        {% with current_user=request.user %}
+                        {% if current_user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'create_quest' %}">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class='dropdown-menu-icon'>Post a Quest</span>
+                            </a>
+                        </li>
                         <li class='dropdown'>
                             <a class="dropdown-toggle" role='button'
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class='glyphicon glyphicon-user'></span>&nbsp;
-                                <span>{{ user.username }}</span>
+                                <span class='glyphicon glyphicon-user'></span>
+                                <span class='dropdown-menu-icon'>{{ current_user.username|truncatechars:10 }}</span>
                                 <span class="caret"></span> 
                             </a>
                             <ul class="dropdown-menu">
                                 <li class='dropdown-menu-options'>
-                                    <a href="{% url 'user_profile' %}">
-                                        <span class="glyphicon glyphicon-cog"></span>&nbsp; Settings
+                                    <a href="{% url 'user_quest_list' %}">
+                                        <span class='glyphicon glyphicon-pushpin'></span>
+                                        <span class='dropdown-menu-icon'>My Quests</span>
                                     </a>
                                 </li>
-                                <li><a href="{% url 'create_quest' %}">
-                                    <span class="glyphicon glyphicon-pencil"></span>&nbsp; Post a Quest
+                                <li class='dropdown-menu-options'>
+                                    <a href="{% url 'user_profile' %}">
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                        <span class='dropdown-menu-icon'>Settings</span>
                                     </a>
                                 </li>
                                 <li><a href="{% url 'account_logout' %}">
-                                    <span class='glyphicon glyphicon-log-out'></span>&nbsp; Logout
+                                    <span class='glyphicon glyphicon-log-out'></span>
+                                    <span class='dropdown-menu-icon'>Logout</span>
                                     </a>
                                 </li>
                             </ul>
@@ -78,19 +90,23 @@
                             <a href="{% url 'account_signup' %}">Sign Up</a>
                         </li>
                         {% endif %}
+                        {% endwith %}
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
         {% block content %}
-        {% endblock %}
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="js/bootstrap.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+        {% endblock content %}
+
+        {% block javascript %}
+            <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <!-- Include all compiled plugins (below), or include individual files as needed -->
+            <script src="js/bootstrap.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+        {% endblock javascript %}
     </body>
 </html>

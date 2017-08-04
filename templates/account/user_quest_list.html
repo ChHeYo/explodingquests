@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class='row'>
+        <div class='col-md-12'>
+            {% with total=user.quests.count %}
+                <p class='h3'>Quests {{ user.username }} posted - total: {{ total }} </p>
+            {% endwith %}
+            <br/>
+        </div>
+        {% for li in list %}
+        <a href="{% url 'quest_detail' li.slug %}">
+            <div class='col-md-3 justify-center quest-list'>
+                <div class='thumbnail'>
+                    <div class='caption'>
+                        <h4>{{ li.title }}</h4>
+                        <p>{{ li.description|truncatewords:50 }}</p>
+                        <p>{{ li.reward_type }}</p>
+                        {% if li.reward_type == "Monetary" %}
+                            <p><span class='dollar-color'>$</span> {{ li.rewards }}</p>
+                        {% else %}
+                            <p>{{ li.rewards }}</p>
+                        {% endif %}
+                        <p><span class='glyphicon glyphicon-fire red-fire'></span> {{ li.explosion_date }}</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

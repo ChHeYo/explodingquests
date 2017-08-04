@@ -23,7 +23,8 @@ from quests.views import (
     HomePageTemplateView, CreateQuest,
     QuestListView, QuestDetailView,
     DeleteQuestView, UpdateQuestView,
-    get_user_profile,
+    get_user_profile, user_quest_list_view,
+    get_selected_user_list,
 )
 
 urlpatterns = [
@@ -31,7 +32,9 @@ urlpatterns = [
     url(r'^quest/(?P<slug>[\w-]+)/$', QuestDetailView.as_view(), name='quest_detail'),
     url(r'^update/(?P<slug>[\w-]+)/$', UpdateQuestView.as_view(), name='update_quest'),
     url(r'^delete/(?P<slug>[\w-]+)/$', DeleteQuestView.as_view(), name='delete_quest'),
+    url(r'^quest_list/(?P<username>[a-zA-Z0-9]+)/$', get_selected_user_list, name='selected_user_list'),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^accounts/quest_list/$', user_quest_list_view, name='user_quest_list'),
     url(r'^accounts/create/$', CreateQuest.as_view(), name='create_quest'),
     url(r'^accounts/settings/$', get_user_profile, name='user_profile'),
     url(r'^admin/', admin.site.urls),
