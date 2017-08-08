@@ -13,30 +13,101 @@
 <div class="container">
     <div class='row'>
         <div class='col-md-12'>
-            {% with total=user.quests.count %}
-                <p class='h3'>Quests {{ user.username }} posted - total: {{ total }} </p>
-            {% endwith %}
-            <br/>
-        </div>
-        {% for li in list %}
-        <a href="{% url 'quest_detail' li.slug %}">
-            <div class='col-md-3 justify-center quest-list'>
-                <div class='thumbnail'>
-                    <div class='caption'>
-                        <h4>{{ li.title }}</h4>
-                        <p>{{ li.description|truncatewords:50 }}</p>
-                        <p>{{ li.reward_type }}</p>
-                        {% if li.reward_type == "Monetary" %}
-                            <p><span class='dollar-color'>$</span> {{ li.rewards }}</p>
-                        {% else %}
-                            <p>{{ li.rewards }}</p>
-                        {% endif %}
-                        <p><span class='glyphicon glyphicon-fire red-fire'></span> {{ li.explosion_date }}</p>
-                    </div>
+             <ul class="nav nav-tabs nav-justified" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a>
+                </li>
+                <li role="presentation">
+                    <a href="#exploded" aria-controls="exploded" role="tab" data-toggle="tab">Exploded</a>
+                </li>
+                <li role="presentation">
+                    <a href="#ticking" aria-controls="ticking" role="tab" data-toggle="tab">Ticking</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="all">
+                   {% with total=list.count %}
+                       <p class='h3'>{{ total }} Posted </p>
+                   {% endwith %} 
+                   <br/>
+                   {% for li in list %}
+                    <a href="{{ li.get_absolute_url }}">
+                        <div class='col-md-3 justify-center quest-list'>
+                            <div class='thumbnail'>
+                                <div class='caption'>
+                                    <h4>{{ li.title }}</h4>
+                                    <p>{{ li.description|truncatewords:50 }}</p>
+                                    <p>{{ li.reward_type }}</p>
+                                    {% if li.reward_type == "Monetary" %}
+                                        <p><span class='dollar-color'>$</span> {{ li.rewards }}</p>
+                                    {% else %}
+                                        <p>{{ li.rewards }}</p>
+                                    {% endif %}
+                                    <p><span class='glyphicon glyphicon-fire red-fire'></span>
+                                        {{ li.explosion_date }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %} 
+                </div>
+                <div role="tabpanel" class="tab-pane" id="exploded">
+                   {% with act_total=actives.count %}
+                       <p class='h3'>{{ act_total }} Exploded</p>
+                   {% endwith %} 
+                   <br/>
+                   {% for active in actives %}
+                    <a href="{{ active.get_absolute_url }}">
+                        <div class='col-md-3 justify-center quest-list'>
+                            <div class='thumbnail'>
+                                <div class='caption'>
+                                    <h4>{{ active.title }}</h4>
+                                    <p>{{ active.description|truncatewords:50 }}</p>
+                                    <p>{{ active.reward_type }}</p>
+                                    {% if active.reward_type == "Monetary" %}
+                                        <p><span class='dollar-color'>$</span> {{ active.rewards }}</p>
+                                    {% else %}
+                                        <p>{{ active.rewards }}</p>
+                                    {% endif %}
+                                    <p><span class='glyphicon glyphicon-fire red-fire'></span>
+                                        {{ active.explosion_date }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}  
+                </div>
+                <div role="tabpanel" class="tab-pane" id="ticking">
+                {% with exp_total=exploded.count %}
+                    <p class='h3'>{{ exp_total }} Ticking </p>
+                {% endwith %} 
+                <br/>
+                {% for explode in exploded %}
+                    <a href="{{ explode.get_absolute_url }}">
+                        <div class='col-md-3 justify-center quest-list'>
+                            <div class='thumbnail'>
+                                <div class='caption'>
+                                    <h4>{{ explode.title }}</h4>
+                                    <p>{{ explode.description|truncatewords:50 }}</p>
+                                    <p>{{ explode.reward_type }}</p>
+                                    {% if explode.reward_type == "Monetary" %}
+                                        <p><span class='dollar-color'>$</span> {{ explode.rewards }}</p>
+                                    {% else %}
+                                        <p>{{ explode.rewards }}</p>
+                                    {% endif %}
+                                    <p><span class='glyphicon glyphicon-fire red-fire'></span>
+                                        {{ explode.explosion_date }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}   
                 </div>
             </div>
-        </a>
-        {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock content %}

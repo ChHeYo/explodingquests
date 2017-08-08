@@ -15,6 +15,8 @@ DATABASES = {
     }
 }
 
-DATE_INPUT_FORMATS = ['%m/%d/%Y', ]
+# DATETIME_INPUT_FORMATS = [
+#     '%m/%d/%Y %H:%M:%S %p',
+# ]
 
-TIME_ZONE = 'America/New_York'
+TIME_ZONE = "America/New_York"

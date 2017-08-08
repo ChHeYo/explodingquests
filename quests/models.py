@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 # from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 
 from .utils import unique_slug_generator
@@ -34,8 +35,23 @@ class RewardModel(models.Model):
         ('Non-monetary', 'Non-monetary'),
     )
 
-    reward_type = models.CharField(max_length=15, choices=REWARD_TYPE, default=REWARD_TYPE[0][0])
-    rewards = models.CharField(max_length=255, default='')
+    MON_REWARD_RATE = (
+        ('Hourly', 'Hourly'),
+        ('Flat', 'Flat'),
+    )
+
+    reward_type = models.CharField(
+        max_length=15, 
+        choices=REWARD_TYPE, 
+        default=REWARD_TYPE[0][0])
+    mon_reward_rate = models.CharField(
+        max_length=10, 
+        choices=MON_REWARD_RATE, 
+        default=REWARD_TYPE[0][0],
+        null=True,
+        blank=True)
+    mon_reward = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    non_mon_rewards = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -61,12 +77,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 
 class Quest(TimeStampModel, RewardModel):
-    STATUS = (
-        ('Ticking', 'Ticking'),
-        ('Diffused', 'Diffused'),
-        ('Exploded', 'Exploded'),
-    )
-
     user = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             related_name='quests',
@@ -74,8 +84,13 @@ class Quest(TimeStampModel, RewardModel):
           )
     title = models.CharField(max_length=255)
     description = models.TextField()
-    status = models.CharField(max_length=15, choices=STATUS, default=STATUS[0][0])
     slug = models.SlugField(null=True, blank=True)
+
+    @property
+    def past_explosion_date(self):
+        if timezone.now() > self.explosion_date:
+            return True
+        return False
 
     class Meta:
         ordering = ['-date_created']    

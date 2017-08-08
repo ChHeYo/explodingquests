@@ -33,7 +33,7 @@
         <div class='col-md-9'>
             <div class='row'>
             {% for quest in user_quests_list %}
-            <a href="{% url 'quest_detail' quest.slug %}">
+            <a href="{{ quest.get_absolute_url }}">
                 <div class='col-md-4 justify-center quest-list'>
                     <div class='thumbnail'>
                         <div class='caption'>

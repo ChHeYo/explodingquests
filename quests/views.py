@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, Http404, get_object_or_404, get_list_or_404
+from django.utils import timezone
 from django.views.generic import (
     TemplateView, ListView, DetailView,
 )
@@ -29,12 +30,21 @@ def get_user_profile(request):
 @login_required
 def user_quest_list_view(request):
     user_quest_list = ''
+    active_list = ''
+    exploded_list = ''
     try:
         user_quest_list = Quest.objects.filter(user=request.user)
+        active_list = Quest.objects.filter(user=request.user).filter(explosion_date__lte=timezone.now())
+        exploded_list = Quest.objects.filter(user=request.user).filter(explosion_date__gte=timezone.now())
     except ObjectDoesNotExist: 
         msg = "No quest"
         raise ObjectDoesNotExist(msg)
-    return render(request, 'account/user_quest_list.html', {'list': user_quest_list})
+    context = {
+        'list': user_quest_list,
+        'actives': active_list,
+        'exploded': exploded_list,
+    }
+    return render(request, 'account/user_quest_list.html', context)
 
 
 def get_selected_user_list(request, username):
@@ -63,7 +73,7 @@ class QuestListView(ListView):
     template_name = "index.html"
     context_object_name = 'quest_list'
     model = Quest
-    queryset = Quest.objects.filter(status='Ticking')
+    queryset = Quest.objects.filter(explosion_date__gte=timezone.now())
 
 
 class QuestDetailView(DetailView):
