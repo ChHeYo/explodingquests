@@ -39,7 +39,7 @@
                                 <p>{{ quest.non_mon_rewards }}</p>
                             {% endif %}
                             <p><span class='glyphicon glyphicon-fire red-fire'></span> 
-                                {{ quest.explosion_date|timeuntil }}</p>
+                                {{ quest.explosion_datetime|timeuntil }}</p>
                             <a href="{{ quest.get_absolute_url }}"
                             class="btn btn-primary" role="button">View More</a> 
                         </div>

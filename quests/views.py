@@ -34,8 +34,8 @@ def user_quest_list_view(request):
     exploded_list = ''
     try:
         user_quest_list = Quest.objects.filter(user=request.user)
-        active_list = Quest.objects.filter(user=request.user).filter(explosion_date__lte=timezone.now())
-        exploded_list = Quest.objects.filter(user=request.user).filter(explosion_date__gte=timezone.now())
+        # active_list = Quest.objects.filter(user=request.user).filter(explosion_date__lte=timezone.now())
+        # exploded_list = Quest.objects.filter(user=request.user).filter(explosion_date__gte=timezone.now())
     except ObjectDoesNotExist: 
         msg = "No quest"
         raise ObjectDoesNotExist(msg)
@@ -73,7 +73,7 @@ class QuestListView(ListView):
     template_name = "index.html"
     context_object_name = 'quest_list'
     model = Quest
-    queryset = Quest.objects.filter(explosion_date__gte=timezone.now())
+    queryset = Quest.objects.all().exclude(explosion_datetime__lte=timezone.now())
 
 
 class QuestDetailView(DetailView):
@@ -91,6 +91,7 @@ class QuestDetailView(DetailView):
 class CreateQuest(LoginRequiredMixin, CreateView):
     form_class = QuestForm
     model = Quest
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user

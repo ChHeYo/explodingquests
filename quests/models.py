@@ -1,3 +1,5 @@
+from datetime import time, timedelta
+
 from django.db import models
 from django.conf import settings
 # from django.contrib.auth.models import User
@@ -21,9 +23,10 @@ def get_profile_image_path(instance, filename):
 
 
 class TimeStampModel(models.Model):
+
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    explosion_date = models.DateTimeField()
+    explosion_datetime = models.DateTimeField(default=timezone.now()+timedelta(days=1))
 
     class Meta:
         abstract = True
@@ -47,10 +50,12 @@ class RewardModel(models.Model):
     mon_reward_rate = models.CharField(
         max_length=10, 
         choices=MON_REWARD_RATE, 
-        default=REWARD_TYPE[0][0],
+        default=REWARD_TYPE[0][0],)
+    mon_reward = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
         null=True,
-        blank=True)
-    mon_reward = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+        blank=True, )
     non_mon_rewards = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
@@ -65,7 +70,9 @@ class UserProfile(models.Model):
                 on_delete=models.CASCADE,
                )
     location = models.CharField(max_length=255)
-    profile_image = models.ImageField(upload_to=get_profile_image_path, null=True)
+    profile_image = models.ImageField(
+        upload_to=get_profile_image_path,
+        null=True, )
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

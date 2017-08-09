@@ -41,7 +41,7 @@
                 <p>{{ quest.rewards }}</p>
                 {% comment %} <p class='justify-right'>Created: {{ quest.date_created }}</p>
                 <p class='justify-right'>Modified: {{ quest.date_modified }}</p> {% endcomment %}
-                <p class='justify-right'>Explode in {{ quest.explosion_date|timeuntil }}</p> 
+                <p class='justify-right'>Explode in {{ quest.explosion_datetime|timeuntil }}</p> 
             </div>
             {% if request.user == quest.user %}
                  <div class='right-aligned-buttons'>

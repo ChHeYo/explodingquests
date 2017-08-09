@@ -42,13 +42,6 @@
                         </div>
                         <div id='reward_field'>
                             <div class='row'>
-                                <div class='col-md-3'>
-                                    <div class="form-group">
-                                        {{ form.mon_reward_rate.label_tag }}<br/>
-                                        {{ form.mon_reward_rate }}
-                                        {{ form.mon_reward_rate.errors }}
-                                    </div>
-                                </div>
                                 <div class='col-md-9'>
                                     <div class="form-group" id="reward_field">
                                         {{ form.mon_reward.label_tag }}<br/>
@@ -61,19 +54,26 @@
                                         {{ form.mon_reward.errors }}
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            {{ form.explosion_date.label_tag }}<br/>
-                            <div class='input-group'>
-                                <div class="input-group-addon">
-                                    <span class='glyphicon glyphicon-calendar'></span>
+                                <div class='col-md-3'>
+                                    <div class="form-group">
+                                        {{ form.mon_reward_rate.label_tag }}<br/>
+                                        {{ form.mon_reward_rate }}
+                                        {{ form.mon_reward_rate.errors }}
+                                    </div>
                                 </div>
-                                {{ form.explosion_date }}
                             </div>
-                            {{ form.explosion_date.errors }}
                         </div>
-                    <input class='btn btn-success btn-lg btn-block btn-margin' type='submit' value='POST'>
+                            <div class="form-group">
+                                {{ form.explosion_datetime.label_tag }}<br/>
+                                <div class='input-group'>
+                                    <div class="input-group-addon">
+                                        <span class='glyphicon glyphicon-calendar'></span>
+                                    </div>
+                                    {{ form.explosion_datetime }}
+                                </div>
+                                {{ form.explosion_datetime.errors }}
+                            </div>
+                    <input class='btn btn-success btn-block post-btn' type='submit' value='POST'>
                 </form>
             </div>
         </div>
@@ -94,7 +94,7 @@
                     $("#non_mon_reward_field").show();
                 }
             });
-            $("#id_explosion_date").datepicker();
+            $("#id_explosion_datetime").datepicker();
         });
     </script>
 {% endblock javascript %}
