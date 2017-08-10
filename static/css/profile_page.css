@@ -2,6 +2,10 @@ body {
     padding-top: 70px;
 }
 
+input[type="text"]:disabled {
+    /* background: blue; */
+}
+
 .box {
     padding: 8px;
     border: 2px solid #dbdbdb;

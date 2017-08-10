@@ -1,5 +1,3 @@
-from datetime import datetime, date, time
-
 from django import forms
 from django.conf import settings
 from django.forms import ModelForm
@@ -28,33 +26,47 @@ class QuestForm(ModelForm):
             "explosion_datetime": "Detonation Timer (default = +1 day)",
         }
         widgets = {
-            'title': forms.TextInput(attrs={"class": "form-control", }),
+            'title': forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Required",
+                     }),
             'description': forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": "10",
+                    "placeholder": "Required",
                     }),
-            'reward_type': forms.Select(attrs={"class": "form-control", }),
-            'mon_reward_rate': forms.Select(attrs={"class": "form-control", }),
+            'reward_type': forms.Select(
+                attrs={
+                    "class": "form-control",
+                    "onchange": "selectChangeFunction()",
+                    }),
+            'mon_reward_rate': forms.Select(
+                attrs={
+                    "class": "form-control",
+                    }),
             'mon_reward': forms.NumberInput(
                 attrs={
                     "class": "form-control", 
                     "step": .01, 
-                    "placeholder": "Non-negative number with 2 decimal places"
+                    "placeholder": "Required"
                     }),
             'non_mon_rewards': forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "i.e. Free Lunch",
+                    "placeholder": "Required (i.e. Free Lunch)",
                 }),
             'explosion_datetime': forms.DateTimeInput(
                 attrs={
                     "class": "form-control",
+                    "readonly": "readonly",
                 }),
         }
 
     def clean_explosion_datetime(self):
         exp_datetime = self.cleaned_data.get('explosion_datetime')
+        print(exp_datetime)
 
         if exp_datetime < timezone.now():
             raise forms.ValidationError("Date cannot be in the past!")
@@ -64,11 +76,15 @@ class QuestForm(ModelForm):
     def clean_mon_reward(self):
         if self.cleaned_data.get('mon_reward'):
             mon_rewd = self.cleaned_data.get('mon_reward')
-
             if mon_rewd < 0:
                 raise forms.ValidationError("Cannot be negative!")
             return mon_rewd
-
+            
+    # def clean_non_mon_rewards(self):
+    #     if self.cleaned_data.get('reward_type') == "Non-monetary":
+    #         if not self.cleaned_data.get('non_mon_rewards'):
+    #             raise forms.ValidationError("Need to specify reward")
+    #         return self.cleaned_data.get('non_mon_rewards')
 
     # def print_explosion_date(self):
     #     exp_date = self.clean_explosion_data.get('explosion_date')

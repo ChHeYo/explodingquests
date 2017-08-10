@@ -49,13 +49,15 @@ class RewardModel(models.Model):
         default=REWARD_TYPE[0][0])
     mon_reward_rate = models.CharField(
         max_length=10, 
-        choices=MON_REWARD_RATE, 
-        default=REWARD_TYPE[0][0],)
+        choices=MON_REWARD_RATE,
+        default=MON_REWARD_RATE[0][0],
+        null=True,
+        blank=True,)
     mon_reward = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
-        blank=True, )
+        blank=True,)
     non_mon_rewards = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:

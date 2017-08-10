@@ -11,13 +11,14 @@
     <!-- for padding top -->
     <link rel='stylesheet' type='text/css' href="{% static 'css/profile_page.css' %}">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/g/jquery.ui.timepicker.addon@1.4.5(jquery-ui-timepicker-addon.min.css+jquery-ui-timepicker-addon.css)">
 {% endblock stylesheets %}
 
 {% block content %}
     <div class='container'>
         <div class='row'>
             <div class='col-md-offset-2 col-md-8'>
-                <form method='POST'>
+                <form method='POST' id='quest_form'>
                     {% csrf_token %}
                         {{ form.non_field_errors }}
                         <div class="form-group">
@@ -30,20 +31,15 @@
                             {{ form.description }}
                             {{ form.description.errors }}
                         </div>
-                        <div class="form-group" id='quest_form'>
+                        <div class="form-group">
                             {{ form.reward_type.label_tag }}<br/>
                             {{ form.reward_type }}
                             {{ form.reward_type.errors }}
                         </div>
-                        <div class='form-group' id="non_mon_reward_field" style="display:none;">
-                            {{ form.non_mon_rewards.label_tag }}<br/>
-                            {{ form.non_mon_rewards }}
-                            {{ form.non_mon_rewards.errors }} 
-                        </div>
                         <div id='reward_field'>
                             <div class='row'>
                                 <div class='col-md-9'>
-                                    <div class="form-group" id="reward_field">
+                                    <div class="form-group">
                                         {{ form.mon_reward.label_tag }}<br/>
                                         <div class='input-group'>
                                             <div class='input-group-addon'>
@@ -63,16 +59,21 @@
                                 </div>
                             </div>
                         </div>
-                            <div class="form-group">
-                                {{ form.explosion_datetime.label_tag }}<br/>
-                                <div class='input-group'>
-                                    <div class="input-group-addon">
-                                        <span class='glyphicon glyphicon-calendar'></span>
-                                    </div>
-                                    {{ form.explosion_datetime }}
+                        <div class='form-group' id="non_mon_reward_field" style='display:none;'>
+                            {{ form.non_mon_rewards.label_tag }}<br/>
+                            {{ form.non_mon_rewards }}
+                            {{ form.non_mon_rewards.errors }}  
+                        </div>
+                        <div class="form-group">
+                            {{ form.explosion_datetime.label_tag }}<br/>
+                            <div class='input-group'>
+                                <div class="input-group-addon">
+                                    <span class='glyphicon glyphicon-calendar'></span>
                                 </div>
-                                {{ form.explosion_datetime.errors }}
+                                {{ form.explosion_datetime }}
                             </div>
+                            {{ form.explosion_datetime.errors }}
+                        </div>
                     <input class='btn btn-success btn-block post-btn' type='submit' value='POST'>
                 </form>
             </div>
@@ -83,18 +84,42 @@
 {% block javascript %}
     {{ block.super }}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/g/jquery.ui.timepicker.addon@1.4.5(jquery-ui-timepicker-addon.min.js+jquery-ui-sliderAccess.js+jquery-ui-timepicker-addon.js)"></script>
     <script>
         $(document).ready(function(){
+
+            $("#quest_form").on('submit', function(e){
+
+                var rewardType = $(this).find('#id_reward_type');
+                var nonMonReward = $(this).find("#id_non_mon_rewards");
+                var monReward = $(this).find("#id_mon_reward");
+
+                if ((rewardType.val() == 'Non-monetary') && (!nonMonReward.val())) {
+                    e.preventDefault();
+                    $('#id_non_mon_rewards').focus();
+                    $("#id_non_mon_rewards").attr("placeholder", "Hello");
+                } else if ((rewardType.val() == "Monetary") && (!monReward.val())) {
+                    e.preventDefault();
+                    $('#id_mon_reward').focus();
+                };
+            });
+
             $("#id_reward_type").change(function(){
-                if ($(this).val() != "Non-monetary"){
-                    $("#reward_field").show();
+                if ($(this).val() == "Monetary"){
                     $("#non_mon_reward_field").hide();
+                    $("#reward_field").show();
                 } else {
-                    $("#reward_field").hide();
                     $("#non_mon_reward_field").show();
+                    $("#reward_field").hide();
                 }
             });
-            $("#id_explosion_datetime").datepicker();
+
+            $("#id_explosion_datetime").datetimepicker({
+                controlType: 'select',
+                oneLine: true,
+                timeFormat: 'HH:mm '
+            });
         });
+        
     </script>
 {% endblock javascript %}

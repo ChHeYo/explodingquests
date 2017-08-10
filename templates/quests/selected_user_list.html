@@ -41,12 +41,12 @@
                             <p>{{ quest.description|truncatewords:50 }}</p>
                             <p>{{ quest.reward_type }}</p>
                             {% if quest.reward_type == "Monetary" %}
-                                <p><span class='dollar-color'>$</span> {{ quest.rewards }}</p>
+                                <p><span class='dollar-color'>$</span> {{ quest.mon_reward }}</p>
                             {% else %}
-                                <p>{{ quest.rewards }}</p>
+                                <p>{{ quest.non_mon_rewards }}</p>
                             {% endif %}
                             <p><span class='glyphicon glyphicon-fire red-fire'>
-                                </span> {{ quest.explosion_date|timeuntil }}
+                                </span> {{ quest.explosion_datetime|timeuntil }}
                             </p>
                         </div>
                     </div>

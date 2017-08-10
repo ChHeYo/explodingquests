@@ -5,6 +5,7 @@ Django==1.11.2
 django-allauth==0.32.0
 django-bootstrap-form==3.2.1
 django-bootstrap3==9.0.0
+django-datetime-widget==0.9.3
 idna==2.5
 oauthlib==2.0.2
 olefile==0.44

@@ -39,12 +39,12 @@
                                     <p>{{ li.description|truncatewords:50 }}</p>
                                     <p>{{ li.reward_type }}</p>
                                     {% if li.reward_type == "Monetary" %}
-                                        <p><span class='dollar-color'>$</span> {{ li.rewards }}</p>
+                                        <p><span class='dollar-color'>$</span> {{ li.mon_reward }}</p>
                                     {% else %}
-                                        <p>{{ li.rewards }}</p>
+                                        <p>{{ li.non_mon_rewards }}</p>
                                     {% endif %}
                                     <p><span class='glyphicon glyphicon-fire red-fire'></span>
-                                        {{ li.explosion_date }}
+                                        {{ li.explosion_datetime }}
                                     </p>
                                 </div>
                             </div>
@@ -66,12 +66,12 @@
                                     <p>{{ active.description|truncatewords:50 }}</p>
                                     <p>{{ active.reward_type }}</p>
                                     {% if active.reward_type == "Monetary" %}
-                                        <p><span class='dollar-color'>$</span> {{ active.rewards }}</p>
+                                        <p><span class='dollar-color'>$</span> {{ active.mon_reward }}</p>
                                     {% else %}
-                                        <p>{{ active.rewards }}</p>
+                                        <p>{{ active.non_mon_rewards }}</p>
                                     {% endif %}
                                     <p><span class='glyphicon glyphicon-fire red-fire'></span>
-                                        {{ active.explosion_date }}
+                                        {{ active.explosion_datetime }}
                                     </p>
                                 </div>
                             </div>
@@ -93,12 +93,12 @@
                                     <p>{{ explode.description|truncatewords:50 }}</p>
                                     <p>{{ explode.reward_type }}</p>
                                     {% if explode.reward_type == "Monetary" %}
-                                        <p><span class='dollar-color'>$</span> {{ explode.rewards }}</p>
+                                        <p><span class='dollar-color'>$</span> {{ explode.mon_reward }}</p>
                                     {% else %}
-                                        <p>{{ explode.rewards }}</p>
+                                        <p>{{ explode.non_mon_rewards }}</p>
                                     {% endif %}
                                     <p><span class='glyphicon glyphicon-fire red-fire'></span>
-                                        {{ explode.explosion_date }}
+                                        {{ explode.explosion_datetime }}
                                     </p>
                                 </div>
                             </div>
