@@ -76,10 +76,10 @@
                                     </a>
                                 </li>
                                 <li class='dropdown-menu-options'>
-                                    <button type='button' class='btn' data-toggle="modal" data-target="#logOutModal">
-                                        <span class='glyphicon glyphicon-log-out'></span>
+                                    <a data-toggle="modal" data-target="#logOutModal"> 
+                                        <span class='glyphicon glyphicon-log-out'></span> 
                                         <span class='dropdown-menu-icon'>Logout</span>
-                                    </button>
+                                    </a>
                                 </li>
                             </ul>
                         </li>
@@ -97,28 +97,25 @@
                 </div>
             </div>
         </nav>
-        <div class="modal fade" id="logOutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
+        <div class="modal fade" id="logOutModal" tabindex="-1" role="dialog" aria-labelledby="logOutLabel">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content justify-center">
+                    <div class="modal-header title-left-padding">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel">Logout</h4>
+                        <h5 class="modal-title" id="logOutLabel">Logout?</h5>
                     </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to sign out?</p>
-                    </div>
-                    <div class="modal-footer">
+                     <div class="modal-footer"> 
                         <form method="post" action="{% url 'account_logout' %}">
                             {% csrf_token %}
                             {% if redirect_field_value %}
                             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
                             {% endif %}
-                        <button class='btn btn-danger btn-lg btn-block btn-margin' type="submit">Logout</button>
+                        <button class='btn btn-danger btn-block btn-margin' type="submit">Confirm</button>
                         </form>
                         {% comment %} <button type="button" class="btn btn-primary">Logout</button> {% endcomment %}
-                    </div>
+                     </div> 
                 </div>
             </div>
         </div>

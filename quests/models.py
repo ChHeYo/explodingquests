@@ -67,16 +67,15 @@ class RewardModel(models.Model):
 
 
 class UserProfile(models.Model):
-    username = models.OneToOneField(
-                settings.AUTH_USER_MODEL,
-                related_name='profile',
-                primary_key=True,
-                on_delete=models.CASCADE,
-               )
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        related_name='profile',
+        primary_key=True,
+        on_delete=models.CASCADE,)
     location = models.CharField(max_length=255)
     profile_image = models.ImageField(
         upload_to=get_profile_image_path,
-        null=True, )
+        null=True,)
 
     def save(self, *args, **kwargs):
         super(UserProfile, self).save(*args, **kwargs)
