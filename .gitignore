@@ -4,3 +4,4 @@ media/
 static/
 migrations/
 settings/
+templates/
