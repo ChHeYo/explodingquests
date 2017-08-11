@@ -3,7 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, Http404, get_object_or_404, get_list_or_404
+from django.shortcuts import (
+    render, Http404,
+    get_object_or_404,
+    get_list_or_404,
+)
 from django.utils import timezone
 from django.views.generic import (
     TemplateView, ListView, DetailView,
@@ -13,7 +17,7 @@ from django.views.generic.edit import (
 )
 
 from .forms import QuestForm
-from .models import Quest, UserProfile
+from .models import Quest, UserProfile, Upload
 
 # Create your views here.
 
@@ -67,6 +71,27 @@ def get_selected_user_list(request, username):
 
     template = 'quests/selected_user_list.html'
     return render(request, template, context)
+
+
+# @login_required
+# def upload_quest_images(request, slug):
+#     thing = get_object_or_404(Quest, slug=slug)
+
+#     if thing.user != request.user:
+#         raise Http404
+    
+#     form_class = QuestForm
+
+#     if request.method == "POST":
+#         form = form_class(data=request.POST, files=request.FILES, instance=thing)
+
+#         if form.is_valid():
+#             Upload.objects.create(image=form.cleaned_data.get['image'], quest=thing)
+
+#         return redirect('upload_quest_images', slug=slug)
+
+#     else:
+#         form = form_class(instance=quest)
 
 
 class QuestListView(ListView):

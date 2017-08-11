@@ -1,3 +1,5 @@
+from PIL import Image
+
 from datetime import time, timedelta
 
 from django.db import models
@@ -75,6 +77,18 @@ class UserProfile(models.Model):
     profile_image = models.ImageField(
         upload_to=get_profile_image_path,
         null=True, )
+
+    def save(self, *args, **kwargs):
+        super(UserProfile, self).save(*args, **kwargs)
+
+        if self.profile_image:
+            image = Image.open(self.profile_image)
+            i_width, i_height = image.size
+            max_size = (200, 200)
+
+            if i_width > 200:
+                image.thumbnail(max_size, Image.ANTIALIAS)
+                image.save(self.profile_image.path)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

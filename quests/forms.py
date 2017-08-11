@@ -29,13 +29,11 @@ class QuestForm(ModelForm):
             'title': forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Required",
                      }),
             'description': forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": "10",
-                    "placeholder": "Required",
                     }),
             'reward_type': forms.Select(
                 attrs={

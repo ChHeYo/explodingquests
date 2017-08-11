@@ -75,10 +75,11 @@
                                         <span class='dropdown-menu-icon'>Settings</span>
                                     </a>
                                 </li>
-                                <li><a href="{% url 'account_logout' %}">
-                                    <span class='glyphicon glyphicon-log-out'></span>
-                                    <span class='dropdown-menu-icon'>Logout</span>
-                                    </a>
+                                <li class='dropdown-menu-options'>
+                                    <button type='button' class='btn' data-toggle="modal" data-target="#logOutModal">
+                                        <span class='glyphicon glyphicon-log-out'></span>
+                                        <span class='dropdown-menu-icon'>Logout</span>
+                                    </button>
                                 </li>
                             </ul>
                         </li>
@@ -96,6 +97,31 @@
                 </div>
             </div>
         </nav>
+        <div class="modal fade" id="logOutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Logout</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to sign out?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" action="{% url 'account_logout' %}">
+                            {% csrf_token %}
+                            {% if redirect_field_value %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                            {% endif %}
+                        <button class='btn btn-danger btn-lg btn-block btn-margin' type="submit">Logout</button>
+                        </form>
+                        {% comment %} <button type="button" class="btn btn-primary">Logout</button> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
         {% block content %}
         {% endblock content %}
 
@@ -106,7 +132,10 @@
             <script src="js/bootstrap.min.js"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous"></script> 
+            {% comment %} <script>
+                $("#myModal").modal('hide');
+            </script> {% endcomment %}
         {% endblock javascript %}
     </body>
 </html>
