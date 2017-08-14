@@ -44,9 +44,8 @@ def get_user_profile(request):
 
 @login_required
 def user_quest_list_view(request):
-    user_quest_list = ''
-    active_list = ''
-    exploded_list = ''
+    initial_list = ['', '', '']
+    user_quest_list, active_list, exploded_list = initial_list
     try:
         user_quest_list = Quest.objects.filter(user=request.user)
         active_list = user_quest_list.filter(explosion_datetime__lte=timezone.now())
@@ -89,6 +88,18 @@ class PasswordChangePageView(PasswordChangeView):
 
 password_change_page_view = login_required(PasswordChangePageView.as_view())
 
+
+class SiteSearchView(ListView):
+    
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            results = Quest.objects.filter(explosion_datetime__gte=timezone.now())
+            results = results.filter(title__icontains=query)
+            return results
+        else:
+            msg = 'No match'
+            raise KeyError(msg)
 
 # @login_required
 # def upload_quest_images(request, slug):
