@@ -1,4 +1,4 @@
-from PIL import Image
+import os
 
 from datetime import time, timedelta
 
@@ -9,10 +9,13 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
-from .utils import unique_slug_generator
+
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
+from PIL import Image
+
+from .utils import unique_slug_generator
 # Create your models here.
 
 
@@ -21,7 +24,7 @@ def get_image_path(instance, filename):
 
 
 def get_profile_image_path(instance, filename):
-    return '/'.join(['profile_images', instance.username.username, filename])
+    return '/'.join(['profile_images', instance.user.username, filename])
 
 
 class TimeStampModel(models.Model):
@@ -36,8 +39,10 @@ class TimeStampModel(models.Model):
 
 class RewardModel(models.Model):
     REWARD_TYPE = (
-        ('Monetary', 'Monetary'),
+        ('MonetaryH', 'Monetary (Hourly)'),
+        ('MonetaryF', 'Monetary (Flat)'),
         ('Non-monetary', 'Non-monetary'),
+        ('Voluntary', 'Voluntary'),
     )
 
     MON_REWARD_RATE = (
@@ -46,21 +51,18 @@ class RewardModel(models.Model):
     )
 
     reward_type = models.CharField(
-        max_length=15, 
-        choices=REWARD_TYPE, 
+        max_length=15,
+        choices=REWARD_TYPE,
         default=REWARD_TYPE[0][0])
-    mon_reward_rate = models.CharField(
-        max_length=10, 
-        choices=MON_REWARD_RATE,
-        default=MON_REWARD_RATE[0][0],
-        null=True,
-        blank=True,)
     mon_reward = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,)
-    non_mon_rewards = models.CharField(max_length=255, null=True, blank=True)
+    non_mon_rewards = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,)
 
     class Meta:
         abstract = True
@@ -87,7 +89,7 @@ class UserProfile(models.Model):
 
             if i_width > 200:
                 image.thumbnail(max_size, Image.ANTIALIAS)
-                image.save(self.profile_image.path)
+                image.save(self.profile_image.path, 'PNG')
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
