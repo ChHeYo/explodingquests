@@ -74,7 +74,7 @@ class UserProfile(models.Model):
         related_name='profile',
         primary_key=True,
         on_delete=models.CASCADE,)
-    location = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, null=True, blank=True)
     profile_image = models.ImageField(
         upload_to=get_profile_image_path,
         null=True,)
@@ -135,5 +135,8 @@ def quest_pre_save_receiver(sender, instance, *args, **kwargs):
 
 
 class Upload(models.Model):
-    quest = models.ForeignKey(Quest, related_name='uploads')
+    quest = models.ForeignKey(
+        Quest, 
+        related_name='uploads',
+        on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_image_path)

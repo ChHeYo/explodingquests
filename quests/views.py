@@ -6,11 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.shortcuts import (
     render, Http404,
     get_object_or_404,
     get_list_or_404,
     HttpResponse,
+    redirect,
 )
 from django.utils import timezone
 from django.views.generic import (
@@ -20,7 +22,7 @@ from django.views.generic.edit import (
     CreateView, DeleteView, UpdateView,
 )
 
-from .forms import QuestForm
+from .forms import QuestForm, QuestImageForm
 from .models import Quest, UserProfile, Upload
 
 # Create your views here.
@@ -95,31 +97,92 @@ class SiteSearchView(ListView):
         query = self.request.GET.get('q')
         if query:
             results = Quest.objects.filter(explosion_datetime__gte=timezone.now())
-            results = results.filter(title__icontains=query)
+            results = results.filter(
+                Q(title__icontains=query) | Q(description__icontains=query))
             return results
         else:
             msg = 'No match'
             raise KeyError(msg)
 
-# @login_required
-# def upload_quest_images(request, slug):
-#     thing = get_object_or_404(Quest, slug=slug)
+@login_required
+def edit_quest_images(request, slug):
+    quest = get_object_or_404(Quest, slug=slug)
 
-#     if thing.user != request.user:
-#         raise Http404
+    if quest.user != request.user:
+        raise Http404
     
-#     form_class = QuestForm
+    form_class = QuestImageForm 
 
-#     if request.method == "POST":
-#         form = form_class(data=request.POST, files=request.FILES, instance=thing)
+    if request.method == "POST":
+        form = form_class(
+            data=request.POST,
+            files=request.FILES,
+            instance=quest)
 
-#         if form.is_valid():
-#             Upload.objects.create(image=form.cleaned_data.get['image'], quest=thing)
+        if form.is_valid():
+            Upload.objects.create(
+                quest=quest,
+                image=form.cleaned_data['image'],)
 
-#         return redirect('upload_quest_images', slug=slug)
+        return redirect('quest_detail', slug=slug)
 
-#     else:
-#         form = form_class(instance=quest)
+    else:
+        form = form_class(instance=quest)
+
+    uploads = quest.uploads.all()
+
+    context = {
+        'quest': quest,
+        'form': form,
+        'uploads': uploads,
+    }
+
+    return render(request, 'quests/edit_quest_images.html', context)
+
+@login_required
+def delete_quest_images(request, id):
+    upload = get_object_or_404(Upload, id=id)
+
+    if upload.quest.user != request.user:
+        raise Http404
+
+    upload.delete()
+
+    return redirect('edit_quest_images', slug=upload.quest.slug)
+
+
+@login_required
+def upload_profile_images(request):
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+
+    if request.user != user_profile.user:
+        raise Http404
+
+    form_class = UploadProfileForm
+
+    if request.method == "POST":
+        form = form_class(
+            data=request.POST,
+            files=request.FILES,
+            instance=user_profile)
+
+        if form.is_valid():
+            UserProfile.object.create(
+                user=current_user,
+                profile_image=form.cleaned_data['profile_image'],
+                location=None,)
+
+        return redirect('homepage')
+
+    else:
+        form = form_class(instance=user_profile)
+
+    context = {
+        'profile': user_profile,
+        'form': form,
+    }
+
+    return render(request, 'accounts/user_profile.html', context)
 
 
 class QuestListView(ListView):
@@ -136,8 +199,10 @@ class QuestDetailView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(QuestDetailView, self).get_context_data(*args, **kwargs)
+        selected_quest = get_object_or_404(Quest, slug=self.kwargs['slug'])
         user = get_object_or_404(User, quests__slug=self.kwargs['slug'])
         context['profile_picture'] = get_object_or_404(UserProfile, user=user)
+        context['uploaded_images'] = selected_quest.uploads.all() 
         return context
 
 

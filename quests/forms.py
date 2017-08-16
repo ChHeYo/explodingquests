@@ -5,7 +5,7 @@ from django.conf import settings
 from django.forms import ModelForm
 from django.utils import timezone
 
-from .models import Quest
+from .models import Quest, Upload
 
 
 class QuestForm(ModelForm):
@@ -104,3 +104,9 @@ class QuestForm(ModelForm):
             self.add_error('non_mon_rewards', msg)
 
         return cleaned_data
+
+
+class QuestImageForm(ModelForm):
+    class Meta:
+        model = Upload
+        fields = ('image', )
