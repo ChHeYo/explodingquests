@@ -20,7 +20,7 @@ from django.views.static import serve
 
 from django.views.generic import TemplateView
 from quests.views import (
-    HomePageTemplateView, CreateQuest,
+    CreateQuest,
     QuestListView, QuestDetailView,
     DeleteQuestView, UpdateQuestView,
     get_user_profile, user_quest_list_view,

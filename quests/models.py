@@ -20,6 +20,8 @@ from .utils import unique_slug_generator
 
 
 def get_image_path(instance, filename):
+    # filename, extension = filename.split(".")
+    # new_filename = "%s.%s" %(filename+"_thumbnail", extension)
     return '/'.join(['quest_images', instance.quest.slug, filename])
 
 
@@ -83,7 +85,6 @@ class UserProfile(models.Model):
         super(UserProfile, self).save(*args, **kwargs)
 
         if self.profile_image:
-            image = Image.open(self.profile_image)
             i_width, i_height = image.size
             max_size = (200, 200)
 
@@ -136,7 +137,7 @@ def quest_pre_save_receiver(sender, instance, *args, **kwargs):
 
 class Upload(models.Model):
     quest = models.ForeignKey(
-        Quest, 
+        Quest,
         related_name='uploads',
         on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_image_path)

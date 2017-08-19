@@ -28,10 +28,6 @@ from .models import Quest, UserProfile, Upload
 # Create your views here.
 
 
-class HomePageTemplateView(TemplateView):
-    template_name = 'index.html'
-
-
 def get_user_profile(request):
     profile_user = get_object_or_404(User, username=request.user.username)
     profile_thumbnail = get_object_or_404(UserProfile, user=request.user)
@@ -91,18 +87,19 @@ class PasswordChangePageView(PasswordChangeView):
 password_change_page_view = login_required(PasswordChangePageView.as_view())
 
 
-class SiteSearchView(ListView):
+# class SiteSearchView(ListView):
+#     template_name = 'quests/search_result.html'
     
-    def get_queryset(self):
-        query = self.request.GET.get('q')
-        if query:
-            results = Quest.objects.filter(explosion_datetime__gte=timezone.now())
-            results = results.filter(
-                Q(title__icontains=query) | Q(description__icontains=query))
-            return results
-        else:
-            msg = 'No match'
-            raise KeyError(msg)
+#     def get_queryset(self):
+#         query = self.request.GET.get('q')
+#         if query:
+#             results = Quest.objects.filter(explosion_datetime__gte=timezone.now())
+#             results = results.filter(
+#                 Q(title__icontains=query) | Q(description__icontains=query))
+#             return results
+#         else:
+#             pass
+
 
 @login_required
 def edit_quest_images(request, slug):
@@ -189,7 +186,24 @@ class QuestListView(ListView):
     template_name = "index.html"
     context_object_name = 'quest_list'
     model = Quest
-    queryset = Quest.objects.all().exclude(explosion_datetime__lte=timezone.now())
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['thumbnails'] = Upload.objects.all()
+        return context
+
+    def get_queryset(self):
+        still_ticking = Quest.objects.all().exclude(explosion_datetime__lte=timezone.now())
+        query = self.request.GET.get('q')
+        if query:
+            # still_ticking = still_ticking.filter()
+            # results = Quest.objects.filter(explosion_datetime__gte=timezone.now())
+            results = still_ticking.filter(
+                Q(title__icontains=query) | Q(description__icontains=query))
+            return results
+        else:
+            return still_ticking
+        # return still_ticking
 
 
 class QuestDetailView(DetailView):
