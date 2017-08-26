@@ -19,6 +19,7 @@ class QuestForm(ModelForm):
             'mon_reward',
             'non_mon_rewards',
             'explosion_datetime',
+            'location',
             )
         labels = {
             "mon_reward_rate": "Rate",
@@ -34,12 +35,11 @@ class QuestForm(ModelForm):
             'description': forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "rows": "7",
+                    "rows": "21",
                     }),
             'reward_type': forms.Select(
                 attrs={
                     "class": "form-control",
-                    "onchange": "selectChangeFunction()",
                     }),
             'mon_reward': forms.NumberInput(
                 attrs={
@@ -51,6 +51,11 @@ class QuestForm(ModelForm):
                 attrs={
                     "class": "form-control",
                     "placeholder": "Required if non-monetary (i.e. Free Lunch)",
+                }),
+            'location': forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Optional",
                 }),
             'explosion_datetime': forms.DateTimeInput(
                 attrs={

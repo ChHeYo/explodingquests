@@ -109,6 +109,7 @@ class Quest(TimeStampModel, RewardModel):
           )
     title = models.CharField(max_length=255)
     description = models.TextField()
+    location = models.TextField(null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)
 
     @property
@@ -124,7 +125,7 @@ class Quest(TimeStampModel, RewardModel):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('quest_detail', kwargs={"slug": self.slug})
+        return reverse('quests:quest_detail', kwargs={"slug": self.slug})
 
 
 @receiver(pre_save, sender=Quest)

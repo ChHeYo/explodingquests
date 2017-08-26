@@ -1,6 +1,7 @@
 from allauth.account.models import EmailAddress
 from allauth.account.views import PasswordChangeView
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -42,7 +43,7 @@ def get_user_profile(request):
 
 @login_required
 def user_quest_list_view(request):
-    initial_list = ['', '', '']
+    initial_list = [''] * 3
     user_quest_list, active_list, exploded_list = initial_list
     try:
         user_quest_list = Quest.objects.filter(user=request.user)
@@ -224,7 +225,7 @@ class CreateQuest(LoginRequiredMixin, CreateView):
     model = Quest
     form_class = QuestForm
     success_url = reverse_lazy("homepage")
-    
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
