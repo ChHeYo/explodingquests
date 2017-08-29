@@ -23,12 +23,14 @@ from quests.views import (
     QuestListView, 
     get_user_profile, user_quest_list_view,
     password_change_page_view,
+    user_dashboard,
 )
 
 urlpatterns = [
     url(r'^$', QuestListView.as_view(), name='homepage'),
     url(r'^quests/', include('quests.urls', namespace='quests')),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^accounts/dashboard/$', user_dashboard, name='dashboard'),
     url(r'^accounts/quest_list/$', user_quest_list_view, name='user_quest_list'),
     url(r'^accounts/settings/$', get_user_profile, name='user_profile'),
     url(r'^admin/', admin.site.urls),

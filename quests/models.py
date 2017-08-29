@@ -107,6 +107,10 @@ class Quest(TimeStampModel, RewardModel):
             related_name='quests',
             on_delete=models.CASCADE
           )
+    interested_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='interested_users')
     title = models.CharField(max_length=255)
     description = models.TextField()
     location = models.TextField(null=True, blank=True)

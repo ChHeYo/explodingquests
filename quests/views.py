@@ -2,6 +2,7 @@ from allauth.account.models import EmailAddress
 from allauth.account.views import PasswordChangeView
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,6 +19,7 @@ from django.shortcuts import (
 from django.utils import timezone
 from django.views.generic import (
     TemplateView, ListView, DetailView,
+    RedirectView,
 )
 from django.views.generic.edit import (
     CreateView, DeleteView, UpdateView,
@@ -28,7 +30,7 @@ from .models import Quest, UserProfile, Upload
 
 # Create your views here.
 
-
+@login_required
 def get_user_profile(request):
     profile_user = get_object_or_404(User, username=request.user.username)
     profile_thumbnail = get_object_or_404(UserProfile, user=request.user)
@@ -39,6 +41,12 @@ def get_user_profile(request):
         'verification': verified,
     }
     return render(request, 'account/user_profile.html', context)
+
+
+@login_required
+def user_dashboard(request):
+    template_name = 'account/user_dashboard.html'
+    return render(request, template_name, {})
 
 
 @login_required
@@ -88,20 +96,6 @@ class PasswordChangePageView(PasswordChangeView):
 password_change_page_view = login_required(PasswordChangePageView.as_view())
 
 
-# class SiteSearchView(ListView):
-#     template_name = 'quests/search_result.html'
-    
-#     def get_queryset(self):
-#         query = self.request.GET.get('q')
-#         if query:
-#             results = Quest.objects.filter(explosion_datetime__gte=timezone.now())
-#             results = results.filter(
-#                 Q(title__icontains=query) | Q(description__icontains=query))
-#             return results
-#         else:
-#             pass
-
-
 @login_required
 def edit_quest_images(request, slug):
     quest = get_object_or_404(Quest, slug=slug)
@@ -116,13 +110,15 @@ def edit_quest_images(request, slug):
             data=request.POST,
             files=request.FILES,
             instance=quest)
+        
+        files = request.FILES.getlist('image')
 
         if form.is_valid():
-            Upload.objects.create(
-                quest=quest,
-                image=form.cleaned_data['image'],)
-
-        return redirect('quest_detail', slug=slug)
+            for f in files:
+                Upload.objects.create(
+                    quest=quest,
+                    image=f.cleaned_data['image'],)
+        return redirect('quests:quest_detail', slug=slug)
 
     else:
         form = form_class(instance=quest)
@@ -136,6 +132,7 @@ def edit_quest_images(request, slug):
     }
 
     return render(request, 'quests/edit_quest_images.html', context)
+
 
 @login_required
 def delete_quest_images(request, id):
@@ -183,6 +180,35 @@ def upload_profile_images(request):
     return render(request, 'accounts/user_profile.html', context)
 
 
+class DiffuseToggle(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        obj = get_object_or_404(Quest, slug=slug)
+        url_ = obj.get_absolute_url()
+        user = self.request.user
+        request = self.request
+        if user.is_authenticated():
+            if user not in obj.interested_users.all():
+                if user != obj.user:
+                    messages.success(
+                        request,
+                        'Diffuse message successfully sent to the quest creator',
+                        extra_tags='diffuse-message')
+                    obj.interested_users.add(user)
+                else:
+                    pass
+            else:
+                if user != obj.user:
+                    messages.success(
+                        request,
+                        'Diffuse message retracted',
+                        extra_tags='diffuse-message')
+                    obj.interested_users.remove(user)
+                else:
+                    pass
+        return url_
+
+
 class QuestListView(ListView):
     template_name = "index.html"
     context_object_name = 'quest_list'
@@ -204,7 +230,6 @@ class QuestListView(ListView):
             return results
         else:
             return still_ticking
-        # return still_ticking
 
 
 class QuestDetailView(DetailView):
@@ -236,10 +261,6 @@ class CreateQuest(LoginRequiredMixin, CreateView):
 class UpdateQuestView(LoginRequiredMixin, UpdateView):
     model = Quest
     form_class = QuestForm
-    # template_name = 'quests/update_quest.html'
-    # fields = [ 
-    #     'title', 'description', 'reward_type',
-    #     'mon_reward', 'mon_reward_rate', 'non_mon_rewards', ]
 
 
 class DeleteQuestView(LoginRequiredMixin, DeleteView):

@@ -35,7 +35,7 @@ class QuestForm(ModelForm):
             'description': forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "rows": "21",
+                    "rows": "10",
                     }),
             'reward_type': forms.Select(
                 attrs={
@@ -115,3 +115,9 @@ class QuestImageForm(ModelForm):
     class Meta:
         model = Upload
         fields = ('image', )
+        widgets = {
+            'image': forms.ClearableFileInput(
+                attrs={
+                    'multiple': True
+                    }),
+        }
