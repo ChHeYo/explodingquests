@@ -31,7 +31,7 @@ from .models import Quest, UserProfile, Upload
 # Create your views here.
 
 @login_required
-def get_user_profile(request):
+def get_user_settings(request):
     profile_user = get_object_or_404(User, username=request.user.username)
     profile_thumbnail = get_object_or_404(UserProfile, user=request.user)
     verified = get_object_or_404(EmailAddress, user=request.user, primary="True")
@@ -40,7 +40,7 @@ def get_user_profile(request):
         'profile_img': profile_thumbnail,
         'verification': verified,
     }
-    return render(request, 'account/user_profile.html', context)
+    return render(request, 'account/user_settings.html', context)
 
 
 @login_required
@@ -117,7 +117,7 @@ def edit_quest_images(request, slug):
             for f in files:
                 Upload.objects.create(
                     quest=quest,
-                    image=f.cleaned_data['image'],)
+                    image=f,)
         return redirect('quests:quest_detail', slug=slug)
 
     else:
@@ -127,7 +127,7 @@ def edit_quest_images(request, slug):
 
     context = {
         'quest': quest,
-        'form': form,
+        'image_form': form,
         'uploads': uploads,
     }
 
@@ -143,7 +143,7 @@ def delete_quest_images(request, id):
 
     upload.delete()
 
-    return redirect('edit_quest_images', slug=upload.quest.slug)
+    return redirect('quests:edit_quest_images', slug=upload.quest.slug)
 
 
 @login_required
@@ -216,7 +216,7 @@ class QuestListView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['thumbnails'] = Upload.objects.all()
+        context['thumbnails'] = Upload.objects.first()
         return context
 
     def get_queryset(self):

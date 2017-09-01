@@ -115,9 +115,6 @@ class QuestImageForm(ModelForm):
     class Meta:
         model = Upload
         fields = ('image', )
-        widgets = {
-            'image': forms.ClearableFileInput(
-                attrs={
-                    'multiple': True
-                    }),
+        labels = {
+            'image': "",
         }
