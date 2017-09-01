@@ -45,8 +45,12 @@ def get_user_settings(request):
 
 @login_required
 def user_dashboard(request):
+    profile_pic = get_object_or_404(UserProfile, user=request.user)
     template_name = 'account/user_dashboard.html'
-    return render(request, template_name, {})
+    context = {
+        'profile_pic': profile_pic,
+    }
+    return render(request, template_name, context)
 
 
 @login_required
