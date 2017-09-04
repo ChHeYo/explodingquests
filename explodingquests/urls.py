@@ -21,17 +21,17 @@ from django.views.static import serve
 from django.views.generic import TemplateView
 from quests.views import (
     QuestListView, 
-    get_user_settings, user_quest_list_view,
+    get_user_settings, 
     password_change_page_view,
-    user_dashboard,
 )
+
 
 urlpatterns = [
     url(r'^$', QuestListView.as_view(), name='homepage'),
     url(r'^quests/', include('quests.urls', namespace='quests')),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^accounts/dashboard/$', user_dashboard, name='dashboard'),
-    url(r'^accounts/quest_list/$', user_quest_list_view, name='user_quest_list'),
+    url(r'^dashboards/', include('profiles.urls', namespace='dashboard')),
+    # url(r'^accounts/quest_list/$', user_quest_list_view, name='user_quest_list'),
     url(r'^accounts/settings/$', get_user_settings, name='user_settings'),
     url(r'^admin/', admin.site.urls),
 ]

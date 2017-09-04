@@ -25,6 +25,8 @@ from django.views.generic.edit import (
     CreateView, DeleteView, UpdateView,
 )
 
+from profiles.models import WorkExperience, Education
+
 from .forms import QuestForm, QuestImageForm
 from .models import Quest, UserProfile, Upload
 
@@ -43,42 +45,14 @@ def get_user_settings(request):
     return render(request, 'account/user_settings.html', context)
 
 
-@login_required
-def user_dashboard(request):
-    profile_pic = get_object_or_404(UserProfile, user=request.user)
-    template_name = 'account/user_dashboard.html'
-    context = {
-        'profile_pic': profile_pic,
-    }
-    return render(request, template_name, context)
-
-
-@login_required
-def user_quest_list_view(request):
-    initial_list = [''] * 3
-    user_quest_list, active_list, exploded_list = initial_list
-    try:
-        user_quest_list = Quest.objects.filter(user=request.user)
-        active_list = user_quest_list.filter(explosion_datetime__lte=timezone.now())
-        exploded_list = user_quest_list.filter(explosion_datetime__gte=timezone.now())
-    except ObjectDoesNotExist:
-        msg = "No quest"
-        raise ObjectDoesNotExist(msg)
-    context = {
-        'list': user_quest_list,
-        'actives': active_list,
-        'exploded': exploded_list,
-    }
-    return render(request, 'account/user_quest_list.html', context)
-
-
 def get_selected_user_list(request, username):
     user = get_object_or_404(User, username=username)
     profile = get_object_or_404(UserProfile, user=user)
+    verified = get_object_or_404(EmailAddress, user=user, primary="True")
 
     user_quests_list = ''
     try:
-        user_quests_list = get_list_or_404(Quest, user=user)
+        user_quests_list = get_list_or_404(Quest, user=user, explosion_datetime__gte=timezone.now())
     except ObjectDoesNotExist:
         pass
 
@@ -86,6 +60,7 @@ def get_selected_user_list(request, username):
         'user': user,
         'profile': profile,
         'user_quests_list': user_quests_list,
+        'verified': verified,
     }
 
     template = 'quests/selected_user_list.html'
@@ -184,6 +159,16 @@ def upload_profile_images(request):
     return render(request, 'accounts/user_profile.html', context)
 
 
+@login_required
+def interested_users_list(request, slug):
+    selected_quest = get_object_or_404(Quest, slug=slug)
+    interested_users = selected_quest.interested_users.all()
+    context = {
+        'interested_users': interested_users,
+    }
+    return render(request, 'quests/interested_users.html', context)
+
+
 class DiffuseToggle(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         slug = self.kwargs.get('slug')
@@ -196,7 +181,7 @@ class DiffuseToggle(LoginRequiredMixin, RedirectView):
                 if user != obj.user:
                     messages.success(
                         request,
-                        'Diffuse message successfully sent to the quest creator',
+                        'Diffuse message successfully sent. The quest creator can now access your profile info.',
                         extra_tags='diffuse-message')
                     obj.interested_users.add(user)
                 else:
@@ -246,7 +231,7 @@ class QuestDetailView(DetailView):
         selected_quest = get_object_or_404(Quest, slug=self.kwargs['slug'])
         user = get_object_or_404(User, quests__slug=self.kwargs['slug'])
         context['profile_picture'] = get_object_or_404(UserProfile, user=user)
-        context['uploaded_images'] = selected_quest.uploads.all() 
+        context['uploaded_images'] = selected_quest.uploads.all()
         return context
 
 

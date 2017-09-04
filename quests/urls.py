@@ -7,6 +7,7 @@ from .views import (
     get_selected_user_list,
     edit_quest_images,
     delete_quest_images,
+    interested_users_list,
     DiffuseToggle,
 )
 
@@ -17,6 +18,7 @@ urlpatterns = [
     url(r'^(?P<slug>[\w-]+)/images/$', edit_quest_images, name='edit_quest_images'),
     url(r'^delete/(?P<id>[\w-]+)/$', delete_quest_images, name='delete_quest_images'),
     url(r'^(?P<slug>[\w-]+)/diffuse/$', DiffuseToggle.as_view(), name='diffuse'),
+    url(r'^(?P<slug>[\w-]+)/interested/$', interested_users_list, name='interested_users'),
     url(r'^(?P<slug>[\w-]+)/update/$', UpdateQuestView.as_view(), name='update_quest'),
     url(r'^(?P<slug>[\w-]+)/delete/$', DeleteQuestView.as_view(), name='delete_quest'),
     url(r'^(?P<username>[a-zA-Z0-9]+)/quest_list/$', get_selected_user_list, name='selected_user_list'),

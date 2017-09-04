@@ -18,12 +18,12 @@ class QuestForm(ModelForm):
             'reward_type',
             'mon_reward',
             'non_mon_rewards',
-            'explosion_datetime',
             'location',
+            'explosion_datetime',
             )
         labels = {
-            "mon_reward_rate": "Rate",
-            "mon_reward": "Amount",
+            'reward_type': '',
+            "mon_reward": "",
             "non_mon_rewards": "Reward",
             "explosion_datetime": "Detonation Timer",
         }
@@ -31,11 +31,13 @@ class QuestForm(ModelForm):
             'title': forms.TextInput(
                 attrs={
                     "class": "form-control",
+                    'placeholder': "Title",
                      }),
             'description': forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "rows": "10",
+                    "rows": "13",
+                    'placeholder': 'Description',
                     }),
             'reward_type': forms.Select(
                 attrs={
@@ -45,17 +47,17 @@ class QuestForm(ModelForm):
                 attrs={
                     "class": "form-control",
                     "step": .01,
-                    "placeholder": "Required if monetary",
+                    "placeholder": "Amount: required if monetary",
                     }),
             'non_mon_rewards': forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Required if non-monetary (i.e. Free Lunch)",
+                    "placeholder": "Reward: required if non-monetary (ie. Free Lunch)",
                 }),
             'location': forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Optional",
+                    "placeholder": "Location (optional)",
                 }),
             'explosion_datetime': forms.DateTimeInput(
                 attrs={
@@ -63,6 +65,10 @@ class QuestForm(ModelForm):
                     "readonly": "readonly",
                 }),
         }
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
+        return super().__init__(*args, **kwargs)
 
     def clean_explosion_datetime(self):
         exp_datetime = self.cleaned_data.get('explosion_datetime')
