@@ -5,7 +5,7 @@ from django.conf import settings
 from django.forms import ModelForm
 from django.utils import timezone
 
-from .models import Quest, Upload
+from .models import Quest, Upload, UserProfileImage
 
 
 class QuestForm(ModelForm):
@@ -117,10 +117,26 @@ class QuestForm(ModelForm):
         return cleaned_data
 
 
+class ProfileImageForm(ModelForm):
+    class Meta:
+        model = UserProfileImage
+        fields = ('profile_thumbnail', )
+        labels = {
+            'profile_thumbnail': "",
+        }
+        widgets = {
+            'profile_thumbnail': forms.FileInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
+        return super().__init__(*args, **kwargs)
+
+
 class QuestImageForm(ModelForm):
     class Meta:
         model = Upload
-        fields = ('image', )
+        fields = ('quest_images', )
         labels = {
-            'image': "",
+            'quest_images': "",
         }

@@ -27,27 +27,52 @@ from django.views.generic.edit import (
 
 from profiles.models import WorkExperience, Education
 
-from .forms import QuestForm, QuestImageForm
-from .models import Quest, UserProfile, Upload
+from .forms import QuestForm, QuestImageForm, ProfileImageForm
+from .models import Quest, UserProfileImage, Upload
 
 # Create your views here.
+
 
 @login_required
 def get_user_settings(request):
     profile_user = get_object_or_404(User, username=request.user.username)
-    profile_thumbnail = get_object_or_404(UserProfile, user=request.user)
-    verified = get_object_or_404(EmailAddress, user=request.user, primary="True")
+    user_profile = UserProfileImage.objects.get(user=profile_user)
+    verified = get_object_or_404(EmailAddress, user=request.user, primary=True)
+
+    if request.user != user_profile.user:
+        raise Http404
+
+    form_class = ProfileImageForm
+
+    if request.method == "POST":
+        form = form_class(
+            data=request.POST,
+            files=request.FILES,
+            instance=user_profile)
+
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = profile_user
+            obj.profile_thumbnail = form.cleaned_data['profile_thumbnail']
+            obj.save()
+
+        return redirect('user_settings')
+
+    else:
+        form = form_class(instance=user_profile)
+
     context = {
         'profile_user': profile_user,
-        'profile_img': profile_thumbnail,
+        'user_profile': user_profile,
         'verification': verified,
+        'profile_img_form': form,
     }
     return render(request, 'account/user_settings.html', context)
 
 
 def get_selected_user_list(request, username):
     user = get_object_or_404(User, username=username)
-    profile = get_object_or_404(UserProfile, user=user)
+    profile = UserProfileImage.objects.get(user=user) 
     verified = get_object_or_404(EmailAddress, user=user, primary="True")
 
     user_quests_list = ''
@@ -82,7 +107,7 @@ def edit_quest_images(request, slug):
     if quest.user != request.user:
         raise Http404
     
-    form_class = QuestImageForm 
+    form_class = QuestImageForm
 
     if request.method == "POST":
         form = form_class(
@@ -90,13 +115,13 @@ def edit_quest_images(request, slug):
             files=request.FILES,
             instance=quest)
         
-        files = request.FILES.getlist('image')
+        files = request.FILES.getlist('quest_images')
 
         if form.is_valid():
             for f in files:
                 Upload.objects.create(
                     quest=quest,
-                    image=f,)
+                    quest_images=f,)
         return redirect('quests:quest_detail', slug=slug)
 
     else:
@@ -126,45 +151,12 @@ def delete_quest_images(request, id):
 
 
 @login_required
-def upload_profile_images(request):
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-
-    if request.user != user_profile.user:
-        raise Http404
-
-    form_class = UploadProfileForm
-
-    if request.method == "POST":
-        form = form_class(
-            data=request.POST,
-            files=request.FILES,
-            instance=user_profile)
-
-        if form.is_valid():
-            UserProfile.object.create(
-                user=current_user,
-                profile_image=form.cleaned_data['profile_image'],
-                location=None,)
-
-        return redirect('homepage')
-
-    else:
-        form = form_class(instance=user_profile)
-
-    context = {
-        'profile': user_profile,
-        'form': form,
-    }
-
-    return render(request, 'accounts/user_profile.html', context)
-
-
-@login_required
 def interested_users_list(request, slug):
     selected_quest = get_object_or_404(Quest, slug=slug)
     interested_users = selected_quest.interested_users.all()
     context = {
         'interested_users': interested_users,
+        'selected_quest': selected_quest,
     }
     return render(request, 'quests/interested_users.html', context)
 
@@ -190,7 +182,7 @@ class DiffuseToggle(LoginRequiredMixin, RedirectView):
                 if user != obj.user:
                     messages.success(
                         request,
-                        'Diffuse message retracted',
+                        'Diffuse message retracted. Your profile info will now be inaccessible to the quest creator.',
                         extra_tags='diffuse-message')
                     obj.interested_users.remove(user)
                 else:
@@ -202,11 +194,6 @@ class QuestListView(ListView):
     template_name = "index.html"
     context_object_name = 'quest_list'
     model = Quest
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context['thumbnails'] = Upload.objects.first()
-        return context
 
     def get_queryset(self):
         still_ticking = Quest.objects.all().exclude(explosion_datetime__lte=timezone.now())
@@ -230,8 +217,9 @@ class QuestDetailView(DetailView):
         context = super(QuestDetailView, self).get_context_data(*args, **kwargs)
         selected_quest = get_object_or_404(Quest, slug=self.kwargs['slug'])
         user = get_object_or_404(User, quests__slug=self.kwargs['slug'])
-        context['profile_picture'] = get_object_or_404(UserProfile, user=user)
+        context['profile_picture'] = UserProfileImage.objects.get(user=user)
         context['uploaded_images'] = selected_quest.uploads.all()
+        context['interested_users_list'] = selected_quest.interested_users.all()
         return context
 
 

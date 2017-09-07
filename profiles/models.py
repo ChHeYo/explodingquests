@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 
 # Create your models here.
@@ -17,6 +18,9 @@ class WorkExperience(Duration):
     title       = models.CharField(max_length=250, blank=True, null=True)
     company     = models.CharField(max_length=250, blank=True, null=True)
     description = models.TextField()
+
+    def get_absolute_url(self):
+        return reverse('dashboard:my_profile')
 
     def __str__(self):
         return self.title

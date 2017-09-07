@@ -25,8 +25,8 @@ def get_image_path(instance, filename):
     return '/'.join(['quest_images', instance.quest.slug, filename])
 
 
-def get_profile_image_path(instance, filename):
-    return '/'.join(['profile_images', instance.user.username, filename])
+def get_profile_thumbnail_path(instance, filename):
+    return '/'.join(['profile_thumbnail', instance.user.username, filename])
 
 
 class TimeStampModel(models.Model):
@@ -70,34 +70,43 @@ class RewardModel(models.Model):
         abstract = True
 
 
-class UserProfile(models.Model):
+class UserProfileImage(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        related_name='profile',
+        related_name='profile_thumbnail',
         primary_key=True,
         on_delete=models.CASCADE,)
-    location = models.CharField(max_length=255, null=True, blank=True)
-    profile_image = models.ImageField(
-        upload_to=get_profile_image_path,
-        null=True,)
+    preferred_name = models.CharField(max_length=200, null=True, blank=True)
+    profile_thumbnail = models.ImageField(
+        upload_to=get_profile_thumbnail_path,
+        null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        super(UserProfile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-        if self.profile_image:
-            i_width, i_height = image.size
+        if self.profile_thumbnail:
+            profile_thumbnail = Image.open(self.profile_thumbnail)
+            i_width, i_height = profile_thumbnail.size
             max_size = (200, 200)
 
             if i_width > 200:
-                image.thumbnail(max_size, Image.ANTIALIAS)
-                image.save(self.profile_image.path, 'PNG')
+                profile_thumbnail.thumbnail(max_size, Image.ANTIALIAS)
+                profile_thumbnail.save(self.profile_thumbnail.path, 'PNG')
 
+    def __str__(self):
+        return self.user.username + ' profile_img'
+
+    def image_url(self):
+        if self.profile_thumbnail and hasattr(self.profile_thumbnail, 'url'):
+            return self.profile_thumbnail.url
+        else:
+            return '/static/image/default_profile.jpg'
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_profile(sender, instance, created, **kwargs):
     user = instance
     if created:
-        profile = UserProfile(user=user)
+        profile = UserProfileImage(user=user)
         profile.save()
 
 
@@ -145,4 +154,4 @@ class Upload(models.Model):
         Quest,
         related_name='uploads',
         on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=get_image_path)
+    quest_images = models.ImageField(upload_to=get_image_path)
