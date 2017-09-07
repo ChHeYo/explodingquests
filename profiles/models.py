@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 
+from quests.models import Quest
+
 # Create your models here.
 
 class Duration(models.Model):
@@ -36,4 +38,16 @@ class Education(Duration):
 
     def __str__(self):
         return self.school
+
+
+class DefuseMessage(models.Model):
+    sender          = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sender')
+    receiver        = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receiver')
+    related_quest   = models.ForeignKey(Quest, related_name='related_quest')
+    subject         = models.CharField(max_length=250)
+    content         = models.TextField()
+    send_at         = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.sender.username
     

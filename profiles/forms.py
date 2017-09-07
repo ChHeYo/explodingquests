@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import WorkExperience, Education
+from .models import WorkExperience, Education, DefuseMessage
 
 
 class WorkExperienceForm(forms.ModelForm):
@@ -50,3 +50,29 @@ class EducationForm(forms.ModelForm):
     class Meta:
         model = Education 
         exclude = ['user']
+
+
+class SendMessageForm(forms.ModelForm):
+
+    class Meta:
+        model = DefuseMessage
+        fields = (
+            'subject',
+            'content',
+        )
+        labels = {
+            'subject': '',
+            'content': '',
+        }
+        widgets = {
+            'subject': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Subject',
+                }),
+            'content': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Content',
+                }),
+        }

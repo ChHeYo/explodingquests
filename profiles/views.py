@@ -1,8 +1,11 @@
 from allauth.account.models import EmailAddress
 
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import render, get_list_or_404, get_object_or_404
@@ -11,8 +14,8 @@ from django.utils import timezone
 
 from quests.models import UserProfileImage, Quest
 
-from .models import Education, WorkExperience
-from .forms import EducationForm, WorkExperienceForm
+from .models import Education, WorkExperience, DefuseMessage
+from .forms import EducationForm, WorkExperienceForm, SendMessageForm
 
 # Create your views here.
 
@@ -49,6 +52,8 @@ def user_quest_list_view(request):
         all_quest = Quest.objects.all()
         defused_quests = all_quest.filter(interested_users=request.user)
         defused_quests_count = defused_quests.count()
+        user_inbox = DefuseMessage.objects.filter(receiver=request.user)
+        user_sent = DefuseMessage.objects.filter(sender=request.user)
     except ObjectDoesNotExist:
         msg = "No quest"
         raise ObjectDoesNotExist(msg)
@@ -57,6 +62,8 @@ def user_quest_list_view(request):
         'count': user_quest_list_count,
         'def_quests': defused_quests,
         'def_quest_count': defused_quests_count,
+        'receiver': user_inbox,
+        'sender': user_sent,
     }
     return render(request, 'profiles/user_quest_list.html', context)
 
@@ -94,6 +101,20 @@ def get_selected_user_profile(request, username):
 
     template = 'profiles/selected_user_profile.html'
     return render(request, template, context)
+
+
+class MessageCreateView(LoginRequiredMixin, CreateView):
+    model = DefuseMessage
+    form_class = SendMessageForm
+    template_name = 'profiles/send_message_form.html'
+    success_url = reverse_lazy("dashboard:selected_user_profile")
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['quest'] = Quest.objects.get()
+
+    # def form_valid(self, form):
+        
 
 
 class WorkExperienceCreateView(LoginRequiredMixin, CreateView):

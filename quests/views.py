@@ -25,7 +25,8 @@ from django.views.generic.edit import (
     CreateView, DeleteView, UpdateView,
 )
 
-from profiles.models import WorkExperience, Education
+from profiles.models import WorkExperience, Education, DefuseMessage
+from profiles.forms import SendMessageForm
 
 from .forms import QuestForm, QuestImageForm, ProfileImageForm
 from .models import Quest, UserProfileImage, Upload
@@ -159,6 +160,58 @@ def interested_users_list(request, slug):
         'selected_quest': selected_quest,
     }
     return render(request, 'quests/interested_users.html', context)
+
+
+@login_required
+def get_selected_user_profile(request, slug, username):
+    
+    user = get_object_or_404(User, username=username)
+    quest = get_object_or_404(Quest, slug=slug)
+    profile_img = UserProfileImage.objects.get(user=user)
+
+    experience = ''
+
+    try:
+        email = get_object_or_404(EmailAddress, user=user, primary=True)
+        experience = get_list_or_404(WorkExperience, user=user)
+    except:
+        pass
+
+    context = {
+        'user': user,
+        'email': email,
+        'experiences': experience,
+        'profile_img': profile_img,
+        'quest': quest,
+    }
+
+    template = 'quests/selected_user_profile.html'
+    return render(request, template, context)
+
+
+class MessageCreateView(LoginRequiredMixin, CreateView):
+    model = DefuseMessage
+    form_class = SendMessageForm
+    template_name = 'quests/send_message_form.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        receiver = get_object_or_404(User, username=self.kwargs['username']) 
+        context['quest'] = get_object_or_404(Quest, slug=self.kwargs['slug'])
+        context['sender'] = get_object_or_404(User, username=self.request.user.username)
+        context['receiver_email'] = get_object_or_404(EmailAddress, user=receiver)
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.sender = self.request.user
+        self.object.receiver = User.objects.get(username=self.kwargs['username'])
+        self.object.related_quest = Quest.objects.get(slug=self.kwargs['slug'])
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("quests:interested_users", kwargs={'slug': self.kwargs['slug']})
 
 
 class DiffuseToggle(LoginRequiredMixin, RedirectView):
