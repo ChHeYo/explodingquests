@@ -7,8 +7,10 @@ from .views import (
     user_quest_list_view,
     user_dashboard,
     profile_list_view,
+    MessageInboxView,
+    MessageDetailView,
     # get_selected_user_profile,
-    MessageCreateView, 
+    # MessageCreateView, 
 )
 
 urlpatterns = [
@@ -26,4 +28,6 @@ urlpatterns = [
         WorkExperienceDeleteView.as_view(),
         name='delete_experience'),
     url(r'^quest_list/$', user_quest_list_view, name='user_quest_list'),
+    url(r'^message_inbox/$', MessageInboxView.as_view(), name='message_inbox'),
+    url(r'^message_inbox/(?P<pk>[\w-]+)/$', MessageDetailView.as_view(), name='message_detail'),
 ]
