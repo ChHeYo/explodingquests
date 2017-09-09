@@ -41,16 +41,23 @@ class Education(Duration):
 
 
 class DefuseMessage(models.Model):
-    sender          = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sender')
-    receiver        = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receiver')
-    related_quest   = models.ForeignKey(Quest, related_name='related_quest')
-    subject         = models.CharField(max_length=250)
-    content         = models.TextField()
-    send_at         = models.DateTimeField(auto_now_add=True)
+    sender              = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sender')
+    receiver            = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receiver')
+    related_quest       = models.ForeignKey(Quest, related_name='related_quest')
+    subject             = models.CharField(max_length=250)
+    content             = models.TextField()
+    trash_by_sender     = models.BooleanField(default=False)
+    trash_by_receiver   = models.BooleanField(default=False)
+    viewed_by_receiver  = models.BooleanField(default=False)
+    send_at             = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
-        return reverse('profiles:message_detail', kwargs={"pk": self.pk})
+        return reverse('dashboard:message_detail', kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.sender.username
-    
+
+    def read_by_receiver(self):
+        if not self.viewed_by_receiver:
+            self.viewed_by_receiver = True
+            self.save()
