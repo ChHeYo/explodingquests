@@ -23,15 +23,20 @@ from quests.views import (
     QuestListView,
     get_user_settings,
     password_change_page_view,
+    account_inactive_redux,
+    email_verification_redux,
 )
 
 
 urlpatterns = [
     url(r'^$', QuestListView.as_view(), name='homepage'),
     url(r'^quests/', include('quests.urls', namespace='quests')),
+    url(r'^accounts/password/change/$', password_change_page_view, name='account_change_password'),
+    url(r'^accounts/inactive/$', account_inactive_redux, name='account_inactive'),
+    url(r'^accounts/confirm-email/$', email_verification_redux, name='account_email_verification_sent'),
+    url(r'^accounts/settings/$', get_user_settings, name='user_settings'),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^dashboards/', include('profiles.urls', namespace='dashboard')),
-    url(r'^accounts/settings/$', get_user_settings, name='user_settings'),
     url(r'^admin/', admin.site.urls),
 ]
 

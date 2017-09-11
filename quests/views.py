@@ -1,5 +1,7 @@
 from allauth.account.models import EmailAddress
-from allauth.account.views import PasswordChangeView
+from allauth.account.views import (
+    PasswordChangeView, AccountInactiveView,
+    EmailVerificationSentView, PasswordResetView, )
 
 from django.conf import settings
 from django.contrib import messages
@@ -30,12 +32,14 @@ from profiles.forms import SendMessageForm
 
 from .forms import QuestForm, QuestImageForm, ProfileImageForm
 from .models import Quest, UserProfileImage, Upload
+from .mixins import RightfulOwnerOfQuestMixin
 
 # Create your views here.
 
 
 @login_required
 def get_user_settings(request):
+    """go to user settings"""
     profile_user = get_object_or_404(User, username=request.user.username)
     user_profile = UserProfileImage.objects.get(user=profile_user)
     verified = get_object_or_404(EmailAddress, user=request.user, primary=True)
@@ -72,6 +76,7 @@ def get_user_settings(request):
 
 
 def get_selected_user_list(request, username):
+    """get quests posted by this user"""
     user = get_object_or_404(User, username=username)
     profile = UserProfileImage.objects.get(user=user) 
     verified = get_object_or_404(EmailAddress, user=user, primary="True")
@@ -96,13 +101,32 @@ def get_selected_user_list(request, username):
 class PasswordChangePageView(PasswordChangeView):
     @property
     def success_url(self):
-        return reverse_lazy("user_profile")
+        return reverse_lazy("user_settings")
 
 password_change_page_view = login_required(PasswordChangePageView.as_view())
 
 
+class AccountInactiveViewRedux(LoginRequiredMixin, AccountInactiveView):
+    @property
+    def template_name(self):
+        if self.request.user.is_active:
+            raise Http404
+        return 'account/account_inactive.html'
+
+account_inactive_redux = login_required(AccountInactiveViewRedux.as_view())
+
+
+class EmailVerificationSentViewRedux(LoginRequiredMixin, EmailVerificationSentView):
+    @property
+    def template_name(self):
+        raise Http404
+
+email_verification_redux = login_required(EmailVerificationSentViewRedux.as_view())
+
+
 @login_required
 def edit_quest_images(request, slug):
+    """add quest image"""
     quest = get_object_or_404(Quest, slug=slug)
 
     if quest.user != request.user:
@@ -141,9 +165,10 @@ def edit_quest_images(request, slug):
 
 @login_required
 def delete_quest_images(request, id):
+    """delete quest image"""
     upload = get_object_or_404(Upload, id=id)
 
-    if upload.quest.user != request.user:
+    if request.user != upload.quest.user:
         raise Http404
 
     upload.delete()
@@ -153,8 +178,13 @@ def delete_quest_images(request, id):
 
 @login_required
 def interested_users_list(request, slug):
+    """go to defuse list for a particular quest"""
     selected_quest = get_object_or_404(Quest, slug=slug)
     interested_users = selected_quest.interested_users.all()
+
+    if request.user != selected_quest.user:
+        raise Http404
+
     context = {
         'interested_users': interested_users,
         'selected_quest': selected_quest,
@@ -164,12 +194,15 @@ def interested_users_list(request, slug):
 
 @login_required
 def get_selected_user_profile(request, slug, username):
-    
+    """go to a particular user profile page who pressed defuse for this quest"""
     user = get_object_or_404(User, username=username)
     quest = get_object_or_404(Quest, slug=slug)
     profile_img = UserProfileImage.objects.get(user=user)
 
     experience = ''
+
+    if request.user != quest.user:
+        raise Http404
 
     try:
         email = get_object_or_404(EmailAddress, user=user, primary=True)
@@ -189,7 +222,8 @@ def get_selected_user_profile(request, slug, username):
     return render(request, template, context)
 
 
-class MessageCreateView(LoginRequiredMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin, RightfulOwnerOfQuestMixin, CreateView):
+    """creating messages"""
     model = DefuseMessage
     form_class = SendMessageForm
     template_name = 'quests/send_message_form.html'
@@ -215,6 +249,7 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
 
 
 class DiffuseToggle(LoginRequiredMixin, RedirectView):
+    """for taking care of logics of pressing defuse"""
     def get_redirect_url(self, *args, **kwargs):
         slug = self.kwargs.get('slug')
         obj = get_object_or_404(Quest, slug=slug)
@@ -244,6 +279,7 @@ class DiffuseToggle(LoginRequiredMixin, RedirectView):
 
 
 class QuestListView(ListView):
+    """Get the total list of quests"""
     template_name = "index.html"
     context_object_name = 'quest_list'
     model = Quest
@@ -252,8 +288,6 @@ class QuestListView(ListView):
         still_ticking = Quest.objects.all().exclude(explosion_datetime__lte=timezone.now())
         query = self.request.GET.get('q')
         if query:
-            # still_ticking = still_ticking.filter()
-            # results = Quest.objects.filter(explosion_datetime__gte=timezone.now())
             results = still_ticking.filter(
                 Q(title__icontains=query) | Q(description__icontains=query))
             return results
@@ -262,6 +296,7 @@ class QuestListView(ListView):
 
 
 class QuestDetailView(DetailView):
+    """go to detail page of a particular quest"""
     template_name = 'quests/quest_detail.html'
     context_object_name = 'quest'
     model = Quest
@@ -277,6 +312,7 @@ class QuestDetailView(DetailView):
 
 
 class CreateQuest(LoginRequiredMixin, CreateView):
+    """take the user to the quest creation page"""
     model = Quest
     form_class = QuestForm
     success_url = reverse_lazy("homepage")
@@ -288,12 +324,31 @@ class CreateQuest(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class UpdateQuestView(LoginRequiredMixin, UpdateView):
+class UpdateQuestView(LoginRequiredMixin, RightfulOwnerOfQuestMixin, UpdateView):
+    """updating quest"""
+    template_name = 'quests/quest_update_form.html'
     model = Quest
     form_class = QuestForm
 
+    def get_context_data(self, *args, **kwargs):
+        '''just to be on the safe side'''
+        context = super().get_context_data(*args, **kwargs)
+        current_quest = get_object_or_404(Quest, slug=self.kwargs['slug'])
+        context['current_user'] = get_object_or_404(User, username=self.request.user)
+        context['quest_creator'] = get_object_or_404(User, username=current_quest.user.username)
+        return context
 
-class DeleteQuestView(LoginRequiredMixin, DeleteView):
+
+class DeleteQuestView(LoginRequiredMixin, RightfulOwnerOfQuestMixin, DeleteView):
+    """deleting quest"""
     template_name = 'quests/delete_quest.html'
     model = Quest
     success_url = reverse_lazy('homepage')
+
+    def get_context_data(self, *args, **kwargs):
+        '''just to be on the safe side'''
+        context = super().get_context_data(*args, **kwargs)
+        current_quest = get_object_or_404(Quest, slug=self.kwargs['slug'])
+        context['current_user'] = get_object_or_404(User, username=self.request.user)
+        context['quest_creator'] = get_object_or_404(User, username=current_quest.user.username)
+        return context

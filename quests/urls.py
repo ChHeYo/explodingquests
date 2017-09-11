@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^(?P<slug>[\w-]+)/$', QuestDetailView.as_view(), name='quest_detail'),
     url(r'^(?P<slug>[\w-]+)/images/$', edit_quest_images, name='edit_quest_images'),
     url(r'^delete/(?P<id>[\w-]+)/$', delete_quest_images, name='delete_quest_images'),
-    url(r'^(?P<slug>[\w-]+)/diffuse/$', DiffuseToggle.as_view(), name='diffuse'),
+    url(r'^(?P<slug>[\w-]+)/defuse/$', DiffuseToggle.as_view(), name='diffuse'),
     url(r'^(?P<slug>[\w-]+)/interested/$', interested_users_list, name='interested_users'),
     url(r'^(?P<slug>[\w-]+)/interested/(?P<username>[a-zA-Z0-9]+)/$',
         get_selected_user_profile, name='selected_user_profile'),

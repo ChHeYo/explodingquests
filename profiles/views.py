@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.db.models import Q
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.views.generic import (
     CreateView, ListView, 
@@ -74,9 +75,12 @@ def user_quest_list_view(request):
 def user_dashboard(request):
     """User dashboard"""
     profile_pic = UserProfileImage.objects.get(user=request.user)
+    received = DefuseMessage.objects.filter(
+        receiver=request.user, viewed_by_receiver=False, trash_by_receiver=False).count()
     template_name = 'profiles/user_dashboard.html'
     context = {
         'profile_pic': profile_pic,
+        'new': received,
     }
     return render(request, template_name, context)
 
@@ -93,6 +97,10 @@ class MessageInboxView(LoginRequiredMixin, ListView):
             receiver=self.request.user, trash_by_receiver=False).order_by('-send_at')
         context['sender'] = DefuseMessage.objects.filter(
             sender=self.request.user, trash_by_sender=False).order_by('-send_at')
+        context['received_count'] = DefuseMessage.objects.filter(
+            receiver=self.request.user, trash_by_receiver=False, viewed_by_receiver=False).count()
+        context['sent_count'] = DefuseMessage.objects.filter(
+            sender=self.request.user, trash_by_sender=False, viewed_by_receiver=False).count()
         return context
 
 
