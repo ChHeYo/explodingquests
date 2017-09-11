@@ -1,6 +1,8 @@
 from django import forms
 
-from .models import WorkExperience, Education, DefuseMessage
+from .models import (
+    WorkExperience, Education,
+    DefuseMessage, ContactUs)
 
 
 class WorkExperienceForm(forms.ModelForm):
@@ -75,4 +77,28 @@ class SendMessageForm(forms.ModelForm):
                     'class': 'form-control',
                     'placeholder': 'Content',
                 }),
+        }
+
+
+class ContactUsForm(forms.ModelForm):
+
+    class Meta:
+        model = ContactUs
+        fields = (
+            'contact_info',
+            'content',
+        )
+        widgets = {
+            'contact_info': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Best way to reach you',
+                }
+            ),
+            'content': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'What do you need help with?',
+                }
+            ),
         }

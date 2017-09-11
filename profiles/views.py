@@ -18,11 +18,22 @@ from django.utils import timezone
 
 from quests.models import UserProfileImage, Quest
 
-from .models import Education, WorkExperience, DefuseMessage
-from .forms import EducationForm, WorkExperienceForm, SendMessageForm
+from .models import (
+    Education, WorkExperience,
+    DefuseMessage, ContactUs)
+from .forms import (
+    EducationForm, WorkExperienceForm,
+    SendMessageForm, ContactUsForm)
 from .mixins import CheckingUserPermissionMixin, UserExperiencePermissionMixin
 
 # Create your views here.
+
+
+class ContactUsFormView(CreateView):
+    '''contact form'''
+    model = ContactUs
+    form_class = ContactUsForm
+    success_url = reverse_lazy('homepage')
 
 
 @login_required

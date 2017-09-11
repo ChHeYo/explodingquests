@@ -19,6 +19,7 @@ from django.conf import settings
 from django.views.static import serve
 
 from django.views.generic import TemplateView
+from profiles.views import ContactUsFormView
 from quests.views import (
     QuestListView,
     get_user_settings,
@@ -37,6 +38,7 @@ urlpatterns = [
     url(r'^accounts/settings/$', get_user_settings, name='user_settings'),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^dashboards/', include('profiles.urls', namespace='dashboard')),
+    url(r'^contact/$', ContactUsFormView.as_view(), name='contact_us'),
     url(r'^admin/', admin.site.urls),
 ]
 

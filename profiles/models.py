@@ -61,3 +61,11 @@ class DefuseMessage(models.Model):
         if not self.viewed_by_receiver:
             self.viewed_by_receiver = True
             self.save()
+
+
+class ContactUs(models.Model):
+    contact_info    = models.CharField(max_length=250)
+    content         = models.TextField()
+
+    def __str__(self):
+        return self.contact_info
