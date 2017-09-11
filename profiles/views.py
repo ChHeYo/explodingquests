@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Q
-from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.shortcuts import render, get_list_or_404, get_object_or_404, Http404
 from django.views.generic import (
     CreateView, ListView, 
     UpdateView, DeleteView, 
@@ -20,6 +20,7 @@ from quests.models import UserProfileImage, Quest
 
 from .models import Education, WorkExperience, DefuseMessage
 from .forms import EducationForm, WorkExperienceForm, SendMessageForm
+from .mixins import CheckingUserPermissionMixin, UserExperiencePermissionMixin
 
 # Create your views here.
 
@@ -104,8 +105,9 @@ class MessageInboxView(LoginRequiredMixin, ListView):
         return context
 
 
-class MessageDetailView(LoginRequiredMixin, DetailView):
+class MessageDetailView(LoginRequiredMixin, CheckingUserPermissionMixin, DetailView):
     """message detail"""
+    template_name = 'profiles/defusemessage_detail.html'
     model = DefuseMessage
     context_object_name = 'message'
 
@@ -127,7 +129,7 @@ class MessageDetailView(LoginRequiredMixin, DetailView):
         return self.render_to_response(context)
 
 
-class MessageDelete(LoginRequiredMixin, RedirectView):
+class MessageDelete(LoginRequiredMixin, CheckingUserPermissionMixin, RedirectView):
     """delete message button"""
     def get_redirect_url(self, *args, **kwargs):
         msg_pk = self.kwargs.get('pk')
@@ -141,16 +143,12 @@ class MessageDelete(LoginRequiredMixin, RedirectView):
                 if not msg.trash_by_sender:
                     msg.trash_by_sender = True
                     msg.save()
-                else:
-                    pass
             elif msg.receiver == user:
                 if not msg.trash_by_receiver:
                     msg.trash_by_receiver = True
                     msg.save()
-                else:
-                    pass
             else:
-                pass
+                Http404
         return url_
 
 
@@ -167,13 +165,14 @@ class WorkExperienceCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class WorkExperienceUpdateView(LoginRequiredMixin, UpdateView):
+class WorkExperienceUpdateView(LoginRequiredMixin, UserExperiencePermissionMixin, UpdateView):
     """updating an experience"""
+    template_name = 'profiles/workexperience_update_form.html'
     model = WorkExperience
     form_class = WorkExperienceForm
 
 
-class WorkExperienceDeleteView(LoginRequiredMixin, DeleteView):
+class WorkExperienceDeleteView(LoginRequiredMixin, UserExperiencePermissionMixin, DeleteView):
     """deleting an experience"""
     model = WorkExperience
     template_name = 'profiles/delete_experience.html'

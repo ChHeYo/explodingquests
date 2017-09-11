@@ -17,13 +17,21 @@ from .models import Quest, UserProfileImage, Upload
 #     inlines = (UserProfileInline, )    
 
 
+class QuestAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'title',
+        'slug',
+    )
+    list_display_links = ('title',)
+
+
 class UploadAdmin(admin.ModelAdmin):
-    list_display = ('quest',)
+    list_display = ('id', 'quest',)
     list_display_links = ('quest',)
-# class Profile
 
 # admin.site.unregister(User)
 # admin.site.register(User)
-admin.site.register(Quest)
+admin.site.register(Quest, QuestAdmin)
 admin.site.register(Upload, UploadAdmin)
 admin.site.register(UserProfileImage)
