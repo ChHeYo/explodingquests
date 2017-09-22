@@ -44,6 +44,7 @@ class DefuseMessage(models.Model):
     sender              = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sender')
     receiver            = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receiver')
     related_quest       = models.ForeignKey(Quest, related_name='related_quest')
+    parent              = models.ForeignKey('self', related_name='replies', blank=True, null=True)
     subject             = models.CharField(max_length=250)
     content             = models.TextField()
     trash_by_sender     = models.BooleanField(default=False)
@@ -55,12 +56,15 @@ class DefuseMessage(models.Model):
         return reverse('dashboard:message_detail', kwargs={"pk": self.pk})
 
     def __str__(self):
-        return self.sender.username
+        return self.subject + ': ' + self.content[:10]
 
     def read_by_receiver(self):
         if not self.viewed_by_receiver:
             self.viewed_by_receiver = True
             self.save()
+
+    class Meta:
+        ordering = ['send_at']
 
 
 class ContactUs(models.Model):

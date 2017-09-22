@@ -10,6 +10,8 @@ from .views import (
     MessageInboxView,
     MessageDetailView,
     MessageDelete,
+    SentPageMessageReply,
+    InterestedPageMessageReply,
 )
 
 urlpatterns = [
@@ -27,4 +29,10 @@ urlpatterns = [
         MessageDetailView.as_view(), name='message_detail'),
     url(r'^message_inbox/(?P<pk>[\w-]+)/delete/$',
         MessageDelete.as_view(), name='message_to_trash'),
+    url(r'^message_inbox/(?P<pk>[\w-]+)/reply/$',
+        SentPageMessageReply.as_view(),
+        name='message_reply'),
+    url(r'^message_inbox/(?P<pk>[\w-]+)/send/$',
+        InterestedPageMessageReply.as_view(),
+        name='interested_message_reply'),
 ]

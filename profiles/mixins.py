@@ -8,16 +8,16 @@ class CheckingUserPermissionMixin(object):
     """Checking user permission"""
     def get_template_names(self):
         particular_defuse_msg = get_object_or_404(DefuseMessage, pk=self.kwargs['pk'])
-        defuse_msg_sender = particular_defuse_msg.sender
-        defuse_msg_receiver = particular_defuse_msg.receiver
         currently_loggedin = get_object_or_404(User, username=self.request.user)
+        msg_sender = get_object_or_404(User, username=particular_defuse_msg.sender.username)
+        msg_receiver = get_object_or_404(User, username=particular_defuse_msg.receiver.username)
+        sender_and_receiver = (msg_sender, msg_receiver)
         if self.template_name is None:
             raise ImproperlyConfigured(
             "TemplateResponseMixin requires either a definition of "
             "'template_name' or an implementation of 'get_template_names()'")
         else:
-            if (currently_loggedin != defuse_msg_sender) or \
-            (currently_loggedin != defuse_msg_receiver):
+            if currently_loggedin not in sender_and_receiver:
                 raise Http404
             else:
                 return [self.template_name]

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.db.models import Q
+from django.db.models import Q 
 from django.shortcuts import render, get_list_or_404, get_object_or_404, Http404
 from django.views.generic import (
     CreateView, ListView, 
@@ -23,7 +23,8 @@ from .models import (
     DefuseMessage, ContactUs)
 from .forms import (
     EducationForm, WorkExperienceForm,
-    SendMessageForm, ContactUsForm)
+    SendMessageForm, ContactUsForm,
+    ReplyForm)
 from .mixins import CheckingUserPermissionMixin, UserExperiencePermissionMixin
 
 # Create your views here.
@@ -101,24 +102,34 @@ class MessageInboxView(LoginRequiredMixin, ListView):
     """Message Inbox page"""
     model = DefuseMessage
     context_object_name = 'messages'
-    template_name = 'profiles/inbox_page.html'
+    template_name = 'profiles/inbox_pages.html'
 
     def get_context_data(self, *args, **kwargs):
+        # for each in context['sender']:
+        #     each_reply_count = each.replies.all()
+        #     print(each_reply_count)
+        #     count_unread = [unread for unread in each_reply_count if unread.viewed_by_receiver == False]
+        #     print(len(count_unread))
         context = super().get_context_data(*args, **kwargs)
-        context['receiver'] = DefuseMessage.objects.filter(
-            receiver=self.request.user, trash_by_receiver=False).order_by('-send_at')
-        context['sender'] = DefuseMessage.objects.filter(
-            sender=self.request.user, trash_by_sender=False).order_by('-send_at')
-        context['received_count'] = DefuseMessage.objects.filter(
-            receiver=self.request.user, trash_by_receiver=False, viewed_by_receiver=False).count()
-        context['sent_count'] = DefuseMessage.objects.filter(
-            sender=self.request.user, trash_by_sender=False, viewed_by_receiver=False).count()
+        every_message = DefuseMessage.objects.prefetch_related('replies')
+        unread_count, created_unread_count = {}, {}
+        context['receiver'] = every_message.filter(
+            receiver=self.request.user, trash_by_receiver=False, parent__isnull=True).order_by('-send_at')
+        for each in context['receiver']:
+            unread_count[each.id] = each.replies.all().filter(viewed_by_receiver=False).count()
+        context['unread_count'] = unread_count
+        context['sender'] = every_message.filter(
+            sender=self.request.user, trash_by_sender=False, parent__isnull=True).order_by('-send_at')
+        for each in context['sender']:
+            created_unread_count[each.id] = each.replies.all().filter(viewed_by_receiver=False).count()
+        context['created_unread_count'] = created_unread_count
+        print(context['created_unread_count'])
         return context
 
 
 class MessageDetailView(LoginRequiredMixin, CheckingUserPermissionMixin, DetailView):
     """message detail"""
-    template_name = 'profiles/defusemessage_detail.html'
+    template_name = 'profiles/defusemessage_detaill.html'
     model = DefuseMessage
     context_object_name = 'message'
 
@@ -127,16 +138,26 @@ class MessageDetailView(LoginRequiredMixin, CheckingUserPermissionMixin, DetailV
         particular_message = get_object_or_404(DefuseMessage, pk=self.kwargs['pk'])
         context['sender_email'] = get_object_or_404(EmailAddress, user=particular_message.sender)
         context['sender_profile'] = get_object_or_404(UserProfileImage, user=particular_message.sender)
+        context['receiver_profile'] = get_object_or_404(UserProfileImage, user=particular_message.receiver)
         context['quest'] = get_object_or_404(Quest, slug=particular_message.related_quest.slug)
+        context['children'] = particular_message.replies.all().order_by('send_at')
+        context['reply_form'] = ReplyForm()
+        context['create_url'] = reverse('dashboard:message_reply', kwargs={'pk': particular_message.pk})
+        context['interested_url'] = reverse('dashboard:interested_message_reply', kwargs={'pk': particular_message.pk})
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
         current_user = get_object_or_404(User, username=self.request.user.username)
+        particular_message = get_object_or_404(DefuseMessage, pk=self.kwargs['pk'])
+        replies = DefuseMessage.objects.filter(parent=particular_message)
         if self.object.receiver == current_user:
             self.object.read_by_receiver()
-            print('read')
+            print(self.object)
+        for reply in replies:
+            if reply.receiver == current_user:
+                reply.read_by_receiver()
         return self.render_to_response(context)
 
 
@@ -161,6 +182,60 @@ class MessageDelete(LoginRequiredMixin, CheckingUserPermissionMixin, RedirectVie
             else:
                 Http404
         return url_
+
+
+class SentPageMessageReply(LoginRequiredMixin, CreateView):
+    """Reply to a specific message"""
+    # can't think straight today just gonna be lazy and not think too much about it
+    form_class = ReplyForm
+    # success_url = reverse_lazy("dashboard:message_detail", kwargs={'pk': })
+
+    def form_valid(self, form):
+        particular_message = get_object_or_404(DefuseMessage, pk=self.kwargs['pk'])
+        receiver = get_object_or_404(User, username=particular_message.receiver.username)
+        quest = get_object_or_404(Quest, slug=particular_message.related_quest.slug)
+        self.object = form.save(commit=False)
+        self.object.sender = self.request.user
+        self.object.receiver = receiver
+        self.object.related_quest = quest
+        if particular_message.parent:
+            self.object.parent = particular_message.parent
+        else:
+            self.object.parent = particular_message
+        self.object.subject = "Re: " + particular_message.subject
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if 'pk' in self.kwargs:
+            pk = self.kwargs['pk']
+        return reverse_lazy('dashboard:message_detail', kwargs={'pk': pk})
+
+
+class InterestedPageMessageReply(LoginRequiredMixin, CreateView):
+    """Reply to a specific message"""
+    form_class = ReplyForm
+
+    def form_valid(self, form):
+        particular_message = get_object_or_404(DefuseMessage, pk=self.kwargs['pk'])
+        receiver = get_object_or_404(User, username=particular_message.sender.username)
+        quest = get_object_or_404(Quest, slug=particular_message.related_quest.slug)
+        self.object = form.save(commit=False)
+        self.object.sender = self.request.user
+        self.object.receiver = receiver
+        self.object.related_quest = quest
+        if particular_message.parent:
+            self.object.parent = particular_message.parent
+        else:
+            self.object.parent = particular_message
+        self.object.subject = "Re: " + particular_message.subject
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        if 'pk' in self.kwargs:
+            pk = self.kwargs['pk']
+        return reverse_lazy('dashboard:message_detail', kwargs={'pk': pk})
 
 
 class WorkExperienceCreateView(LoginRequiredMixin, CreateView):

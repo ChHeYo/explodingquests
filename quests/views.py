@@ -32,7 +32,7 @@ from profiles.forms import SendMessageForm
 
 from .forms import QuestForm, QuestImageForm, ProfileImageForm
 from .models import Quest, UserProfileImage, Upload
-from .mixins import RightfulOwnerOfQuestMixin
+from .mixins import RightfulOwnerOfQuestMixin, SendingPermissionMixin
 
 # Create your views here.
 
@@ -203,6 +203,9 @@ def get_selected_user_profile(request, slug, username):
 
     if request.user != quest.user:
         raise Http404
+    else:
+        if user not in quest.interested_users.all():
+            raise Http404
 
     try:
         email = get_object_or_404(EmailAddress, user=user, primary=True)
@@ -222,7 +225,7 @@ def get_selected_user_profile(request, slug, username):
     return render(request, template, context)
 
 
-class MessageCreateView(LoginRequiredMixin, RightfulOwnerOfQuestMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin, SendingPermissionMixin, CreateView):
     """creating messages"""
     model = DefuseMessage
     form_class = SendMessageForm
@@ -241,6 +244,7 @@ class MessageCreateView(LoginRequiredMixin, RightfulOwnerOfQuestMixin, CreateVie
         self.object.sender = self.request.user
         self.object.receiver = User.objects.get(username=self.kwargs['username'])
         self.object.related_quest = Quest.objects.get(slug=self.kwargs['slug'])
+        self.object.parent = None
         self.object.save()
         return super().form_valid(form)
 

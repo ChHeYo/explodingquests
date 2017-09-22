@@ -17,8 +17,9 @@ class ExperienceAdmin(admin.ModelAdmin):
 class DefuseMessageAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'sender',
-        'receiver', 'subject',
-        'content', 'viewed_by_receiver')
+        'receiver', 'parent',
+        'subject', 'content',
+        'viewed_by_receiver')
     list_display_links = ('subject', )
 
 

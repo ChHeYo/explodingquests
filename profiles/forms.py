@@ -80,6 +80,27 @@ class SendMessageForm(forms.ModelForm):
         }
 
 
+class ReplyForm(forms.ModelForm):
+
+    class Meta:
+        model = DefuseMessage
+        fields = (
+            'content',
+        )
+        labels = {
+            'content': '',
+        }
+        widgets = {
+            'content': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'rows': 6,
+                    'onfocus':"this.placeholder = ''",
+                    'placeholder': 'Click here to reply',
+                }),
+        }
+
+
 class ContactUsForm(forms.ModelForm):
 
     class Meta:
