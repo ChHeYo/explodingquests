@@ -116,14 +116,17 @@ class MessageInboxView(LoginRequiredMixin, ListView):
         context['receiver'] = every_message.filter(
             receiver=self.request.user, trash_by_receiver=False, parent__isnull=True).order_by('-send_at')
         for each in context['receiver']:
-            unread_count[each.id] = each.replies.all().filter(viewed_by_receiver=False).count()
+            unread_count[each.id] = each.replies.all().filter(
+                receiver=self.request.user, viewed_by_receiver=False).count()
         context['unread_count'] = unread_count
+        context['total_count'] = sum(unread_count.values())
         context['sender'] = every_message.filter(
             sender=self.request.user, trash_by_sender=False, parent__isnull=True).order_by('-send_at')
         for each in context['sender']:
-            created_unread_count[each.id] = each.replies.all().filter(viewed_by_receiver=False).count()
+            created_unread_count[each.id] = each.replies.all().filter(
+                receiver=self.request.user, viewed_by_receiver=False).count()
         context['created_unread_count'] = created_unread_count
-        print(context['created_unread_count'])
+        context['created_unread_total_count'] = sum(created_unread_count.values())       
         return context
 
 
