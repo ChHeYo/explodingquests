@@ -1,1 +1,1 @@
-web: gunicorn explodingquests.wsgi --log-file 
+web: gunicorn explodingquests.wsgi --log-file -
