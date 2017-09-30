@@ -1,0 +1,1 @@
+web: gunicorn explodingquests.wsgi --log-file 
