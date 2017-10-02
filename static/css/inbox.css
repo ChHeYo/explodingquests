@@ -1,0 +1,131 @@
+.upper-navs > li > a,
+.upper-navs > li > a:hover,
+.upper-navs > li > a:focus {
+    border-radius: 0px;
+    background-color: #dbdbdb;
+}
+
+.upper-navs > li.active > a,
+.upper-navs > li.active > a:hover,
+.upper-navs > li.active > a:focus {
+    border-top: 2px solid black;
+    border-left: 1px solid #5b5b5b;
+    border-right: 1px solid #5b5b5b;
+    border-radius: 0px;
+    background-color: white; 
+    color: black;
+    font-weight: bold;
+}
+
+.inbox-labels {
+    background-color: white;
+    margin-bottom: 5px;
+    padding-left: 16px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
+.receive-list,
+.receive-list-read {
+    background-color: white;
+    border-top: 1px solid #969696; 
+    padding-top: 8px;
+    padding-bottom: 2px;
+    overflow: hidden;
+}
+
+.receive-list-read {
+    background-color: white;
+    /* background-color: #c4c4c4; */
+}
+
+.inbox-nav {
+    padding-left: 0px;
+}
+
+.receive-list p,
+.receive-list-read p,
+.inbox-labels p {
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 0px;
+    display: inline-block;
+    max-height: 20px;
+}
+
+.receive-list .to,
+.receive-list .quest,
+.receive-list .subject,
+.receive-list .send_at {
+    font-weight: bold;
+}
+
+.receive-list span {
+    font-weight: normal;
+}
+
+.received-page,
+.inbox-page {
+    padding-top: 0px;
+}
+
+.receive-list .quest,
+.receive-list-read .quest,
+.label-quest {
+    width: 20%;
+}
+
+.receive-list .send_at,
+.receive-list-read .send_at, {
+    width: 10%;
+}
+
+.receive-list .subject,
+.receive-list-read .subject,
+.label-subject {
+    width: 50%;
+}
+
+.receive-list .to,
+.receive-list-read .to,
+.label-to {
+    width: 10%;/*150*/ 
+}
+
+.sent-list .to,
+.sent-list .quest,
+.sent-list .subject,
+.sent-list .send_at {
+    font-weight: normal;
+}
+
+.dashboard-notification {
+    display: inline-block;
+    vertical-align: middle;
+    background: red;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.total-dashboard-notification {
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    background: red;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%; 
+}
+
+.empty-message {
+    padding-top: 20px;
+    padding-left: 10px;
+}
+
+.empty-message a {
+    color: #4375c6;
+}

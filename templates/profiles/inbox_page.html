@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} - Inbox
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/quest_collection.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/inbox.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class='row'>
+        <div class='col-xs-12 col-sm-12 col-md-offset-2 col-md-10 inbox-nav'>
+            <ul class="nav nav-pills upper-navs" role="tablist" id='inbox-tabs'>
+                <li role="presentation" class='active'>
+                    <a href="#inbox" aria-controls="all" role="tab" data-toggle="tab">
+                        <span class='glyphicon glyphicon-inbox'></span> Interested ({{ received_count }})
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#sent" aria-controls="all" role="tab" data-toggle="tab">
+                        <span class='glyphicon glyphicon-send'></span> Created
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class='col-md-2 filter-nav'>
+            <ul class="hidden-xs hidden-sm nav nav-pills nav-stacked" role="tablist">
+                <li role="presentation">
+                    <a class='btn btn-default btn-block' href="{% url 'dashboard:user_dashboard' %}">
+                        <span class='glyphicon glyphicon-dashboard'></span> Dashboard
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class='col-xs-12 col-sm-12 col-md-10 quest-collection-page'>
+            <div class='row'>
+                <div class="tab-content">
+                    <div class="tab-pane active inbox-page" id="inbox">
+                        {% for got in receiver %}
+                        <a href="{{ got.get_absolute_url }}">
+                            {% if got.viewed_by_receiver %}
+                            <div class='col-xs-12 col-sm-12 col-md-12 receive-list-read'>
+                            {% else %}
+                            <div class='col-xs-12 col-sm-12 col-md-12 receive-list'>
+                            {% endif %}
+                                <p class='to'>{{ got.receiver }}</p>
+                                <p class='hidden-xs hidden-sm quest'>{{ got.related_quest|title|truncatewords:2 }}</p>
+                                <p class='subject'>{{ got.subject|capfirst|truncatechars:15 }} - 
+                                    <span>{{ got.content|truncatewords:10 }}</span>
+                                </p>
+                                <p class='send_at justify-right'>{{ got.send_at|date:"m/d/y G:i" }}</p>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane received-page" id="sent">
+                    {% for sent in sender %}
+                    <a href="{{ sent.get_absolute_url }}">
+                        {% if sent.viewed_by_receiver %}
+                        <div class='col-xs-12 col-sm-12 col-md-12 receive-list-read sent-list'>
+                            <p>To: </p>
+                            <p class='to'>{{ sent.receiver }}</p>
+                        {% else %}
+                        <div class='col-xs-12 col-sm-12 col-md-12 receive-list sent-list'>
+                            <p>To: </p>
+                            <p class='to'>{{ sent.receiver }}</p>
+                        {% endif %}
+                            <p>{{ sent.content|truncatechars:10 }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+    $(document).ready(function() {
+        if (location.hash) {
+            $("a[href='" + location.hash + "']").tab("show");
+        }
+        $(document.body).on("click", "a[data-toggle]", function(event) {
+            location.hash = this.getAttribute("href");
+        });
+    });
+    $(window).on("popstate", function() {
+        var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
+        $("a[href='" + anchor + "']").tab("show");
+    });
+    </script>
+{% endblock javascript %}

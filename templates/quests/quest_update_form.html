@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+{% block title %}
+    {{ block.super }} - Post
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <!-- for padding top -->
+    <link rel='stylesheet' type='text/css' href="{% static 'css/profile_page.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/quest_form.css' %}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/g/jquery.ui.timepicker.addon@1.4.5(jquery-ui-timepicker-addon.min.css+jquery-ui-timepicker-addon.css)">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-12'>
+                {% if current_user == quest_creator %}
+                <div class='thumbnail quest-creation-page'>
+                    <div class='row'>
+                    <form method='POST' id='quest_form'>
+                    {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        {% for field in form %}
+                            {% if field.id_for_label == "id_title" %}
+                            <div class='col-md-8'>
+                                <div class="form-group">
+                                    {% comment %} {{ field.label_tag }}<br/> {% endcomment %}
+                                    {{ field }}
+                                    {% if form.errors %}
+                                        {% for error in field.errors %}
+                                            <p class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            {{ error }}
+                                        </p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            {% elif field.id_for_label == 'id_description' %}
+                            <div class="form-group">
+                                    {% comment %} {{ field.label_tag }}<br/> {% endcomment %}
+                                    {{ field }}
+                                    {% if form.errors %}
+                                        {% for error in field.errors %}
+                                            <p class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            {{ error }}
+                                        </p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% elif field.id_for_label == "id_mon_reward" %}
+                            <div class='col-md-4'>
+                                <div class="form-group">
+                                    {% comment %} {{ field.label_tag }}<br/> {% endcomment %}
+                                    <div class='input-group'>
+                                        <div class='input-group-addon'>
+                                            <span class='glyphicon glyphicon-usd'></span>
+                                        </div> 
+                                        {{ field }}
+                                    </div>
+                                    {% if form.errors %}
+                                        {% for error in field.errors %}
+                                        <p class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            {{ error }} 
+                                        </p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% elif field.id_for_label == "id_explosion_datetime" %}
+                            <div class='col-md-4 datetime-field'>
+                                <div class="form-group">
+                                    {{ field.label_tag }}
+                                    <div class='input-group'>
+                                        <div class="input-group-addon">
+                                            <span class='glyphicon glyphicon-calendar'></span>
+                                        </div>
+                                        {{ field }}
+                                    </div>
+                                    {% if form.errors %}
+                                        {% for error in field.errors %}
+                                        <p class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            {{ error }} 
+                                        </p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% else %}
+                            {% if field.id_for_label == 'id_location' %}
+                                <div class='col-md-4 location-field'>
+                            {% else %}
+                                <div class='col-md-4'>
+                            {% endif %}
+                            {% comment %} <div class='col-md-4'> {% endcomment %}
+                                <div class="form-group">
+                                    {{ field }}
+                                    {% if form.errors %}
+                                        {% for error in field.errors %}
+                                            <p class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            {{ error }}
+                                        </p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class='col-md-12 justify-right'>
+                            <input class='btn btn-primary' type='submit'>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                {% else %}
+                    <p>Not Accessible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/g/jquery.ui.timepicker.addon@1.4.5(jquery-ui-timepicker-addon.min.js+jquery-ui-sliderAccess.js+jquery-ui-timepicker-addon.js)"></script>
+    
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh1xtJWqWPIi5N5pjxcbERg6Urj4GzmFM&libraries=places"></script> --> 
+    <script>
+
+        $(document).ready(function(){
+            
+            $("#id_explosion_datetime").datetimepicker({
+                timeInput: true,
+                controlType: 'select',
+                timeFormat: 'HH:mm', //probably good idea to store info somewhere else
+                showTime: false,
+                oneLine: true
+            });
+
+            $("#id_reward_type").change(function(){
+                if ($(this).val() === "Voluntary"){
+                    $("#id_mon_reward").prop('disabled', true);
+                    $("#id_non_mon_rewards").prop('disabled', true);
+                    $('#id_mon_reward_rate').prop('disabled', true);
+                } else {
+                    $("#id_mon_reward").prop('disabled', false);
+                    $("#id_non_mon_rewards").prop('disabled', false);
+                    $('#id_mon_reward_rate').prop('disabled', false);
+                }
+            });
+        });
+
+    </script>
+    <!-- <script type="text/javascript">
+        function init() {
+            var input = document.getElementById('id_location');
+            var autocomplete = new google.maps.places.Autocomplete(input);
+        }
+
+        google.maps.event.addDomListener(window, 'load', init);
+    </script> -->
+{% endblock javascript %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+{% load humanize %}
+
+{% block title %}
+    {{ block.super }} - {{ quest.title }}   
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/quest_detail.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class='container'>
+    <div class="row">
+        {% for message in messages %}
+            {% if 'diffuse-message' in message.tags %}
+            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+            {% endif %}
+        {% endfor %}
+        <div class='col-md-3 justify-center'>
+            <div class='thumbnail'>
+                    <a href="{% url 'quests:selected_user_list' quest.user.username %}"> 
+                        <img class='image-size image-margin-top' src="{{ profile_picture.image_url }}" alt='profile-image'>
+                    </a>
+                <div class='caption'>
+                    <h4>{{ quest.user.username }}</h4>
+                </div>
+            </div>
+            <div class='thumbnail location-thumbnail'>
+                <h5>Location</h5>
+                <hr/>
+                {% if quest.location %}
+                    <a href='https://www.google.com/maps/?q={{ quest.location }}'>
+                    <div class='location'>
+                        <p class='address'>{{ quest.location|title }}</p>
+                {% else %}
+                    <div class='location'>
+                        <p class='address'>N/A</p>
+                {% endif %}
+                    </div>
+                </a>
+            </div>
+            <p class='address-notice'>Click the address to see the location</p>
+            {% if request.user.is_authenticated %}
+                {% if request.user == quest.user %}
+                    <div id='diffuse-list'>
+                        <a class='btn btn-primary btn-block' href="{% url 'quests:interested_users' quest.slug %}">
+                            Defuse List    
+                        </a>
+                    </div>
+                    <button class="btn btn-block btn-success option-buttons" type="button" 
+                    data-toggle="collapse" data-target="#collapseExample" 
+                    aria-expanded="false" aria-controls="collapseExample">
+                        Options
+                    </button>
+                    <div class="collapse" id="collapseExample">
+                        <div class="well">
+                            <a class='btn btn-primary btn-block collapse-buttons' type='button'
+                            href="{% url 'quests:edit_quest_images' object.slug %}"> 
+                                Add / Delete Photos
+                            </a>
+                            <a class='btn btn-warning btn-block collapse-buttons' type='button'
+                            href="{% url 'quests:update_quest' object.slug %}">
+                                Modify Quest
+                            </a>
+                            <a class='btn btn-danger btn-block collapse-buttons-last'
+                            href="{% url 'quests:delete_quest' object.slug %}"> 
+                                Self-destruct
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class='diffuse-button'>
+                        {% if request.user in interested_users_list %}
+                            <a class='btn btn-block btn-danger'
+                            href="{% url 'quests:diffuse' object.slug %}">
+                            Retract
+                        {% else %}
+                            <a class='btn btn-block btn-primary'
+                            href="{% url 'quests:diffuse' object.slug %}">
+                                Defuse
+                        {% endif %}
+                        </a>
+                    </div>
+                {% endif %}
+            {% else %}
+            <div class='diffuse-button'>
+                <a class='btn btn-block btn-success'
+                href="{% url 'account_signup' %}">
+                    Defuse
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        <div class='col-md-9'>
+            <div class='thumbnail quest-detail-page'>
+                <p class='bold-title h4'>"{{ quest.title|title }}"</p>
+                <p class='description-text'>{{ quest.description|capfirst|linebreaks|urlize }}</p>
+                {% if quest.reward_type == "MonetaryH" %}
+                    <p class='justify-right reward-text'><span class='dollar-color'>$</span> {{ quest.mon_reward }} / Hour</p>
+                {% elif quest.reward_type == "MonetaryF" %}
+                    <p class='justify-right reward-text'><span class='dollar-color'>$</span> {{ quest.mon_reward }} / Flat</p>
+                {% elif quest.reward_type == "Non-monetary" %}
+                    <p class='justify-right reward-text'>{{ quest.non_mon_rewards }}</p>
+                {% else %}
+                    <p class='justify-right reward-text'>{{ quest.reward_type }}</p>
+                {% endif %}
+                <p>{{ quest.rewards }}</p>
+                <p class='justify-right explosion-text'>Explode in {{ quest.explosion_datetime|timeuntil }}</p> 
+            </div>
+            {% if uploaded_images %}
+            <div id="carousel-example-generic" class="carousel slide" data-interval='false' data-ride="carousel">
+                <div class="carousel-inner" role="listbox">
+                    {% for upload in uploaded_images %}
+                        {% if forloop.first %}
+                            <div class="item active">
+                        {% else %}
+                            <div class="item">
+                        {% endif %}
+                                <img src="{{ upload.quest_images.url }}" alt="...">
+                            </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Controls -->
+                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

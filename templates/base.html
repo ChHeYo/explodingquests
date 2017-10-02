@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load bootstrap %}
+<html lang='en'>
+    <head>
+        <meta charset="utf-8">
+        <title>
+            {% block title %}ExplodingQuest{% endblock title %}
+        </title>
+        {% block stylesheets %}
+            <!-- Bootstrap -->
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+            <link rel="shortcut icon" type="image/png" href="{% static 'image/favicon.png' %}">
+            <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+        {% endblock stylesheets %}
+    </head>
+    <body>
+        <!-- Navigation -->
+        <nav class='navbar navbar-default navbar-fixed-top'>
+            <div class='container'>
+                <div class='navbar-header'>
+                    <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class='navbar-brand' href="{% url 'homepage' %}">
+                         <span class='explosion_color'>Exploding</span><span class='quest'>Quest</span> 
+                    </a>
+                </div>
+
+                <div id='navbar' class='collapse navbar-collapse'>
+                    <form class="navbar-form navbar-left">
+                        <div class="input-group">
+                            <form method='GET' action="{% url 'homepage' %}", id="general-searchform">
+                                <input type="text" class="form-control" id='navbar-searchform'
+                                name = "q" value="{{ request.GET.q }}" placeholder="Search for...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">
+                                        <span class='glyphicon glyphicon-search'></span>
+                                    </button>
+                                </span>
+                            </form>
+                        </div>
+                    </form>
+                    <ul class='nav navbar-nav navbar-right'>
+                        {% with current_user=request.user %}
+                        {% if current_user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'quests:create_quest' %}">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class='dropdown-menu-icon'>Post a Quest</span>
+                            </a>
+                        </li>
+                        <li class='dropdown'>
+                            <a class="dropdown-toggle" role='button'
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class='glyphicon glyphicon-user'></span>
+                                <span class='dropdown-menu-icon'>My Account</span>
+                                <span class="caret"></span> 
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class='dropdown-menu-options'>
+                                    <a href="{% url 'dashboard:user_dashboard' %}">
+                                        <span class='glyphicon glyphicon-dashboard'></span>
+                                        <span class='dropdown-menu-icon'>Dashboard</span>
+                                    </a>
+                                </li>
+                                <li class='dropdown-menu-options'>
+                                    <a href="{% url 'user_settings' %}">
+                                        <span class='glyphicon glyphicon-cog'></span>
+                                        <span class='dropdown-menu-icon'>Settings</span>
+                                    </a>
+                                </li>
+                                <hr/>
+                                <li class='dropdown-menu-options'>
+                                    <a data-toggle="modal" data-target="#logOutModal"> 
+                                        <span class='glyphicon glyphicon-log-out'></span> 
+                                        <span class='dropdown-menu-icon'>Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li>   
+                            <a href="{% url 'account_login' %}">Login</a> 
+                        </li>
+                        <li>
+                            <a href="{% url 'account_signup' %}">Sign Up</a>
+                        </li>
+                        {% endif %}
+                        {% endwith %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% with current_user=request.user %}
+            {% if current_user.is_authenticated %}
+                {% include 'modal.html' with title="Logout?" button="Confirm" id="logOutModal" label="logOutLabel" %} 
+            {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock content %}
+
+        {% block footer %}
+            <footer class='footer'>
+                <div class='container'>
+                    <p class='text-muted'>
+                        &copy; 2017 ExplodingQuests, Inc.
+                        | <a href="{% url 'contact_us' %}" class='contact'>Contact</a>
+                    </p>    
+                </div>    
+            </footer> 
+        {% endblock footer %}
+
+        {% block javascript %}
+            <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <!-- Include all compiled plugins (below), or include individual files as needed -->
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script> 
+
+        {% endblock javascript %}
+    </body>
+</html>

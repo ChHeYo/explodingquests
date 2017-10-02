@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/experience_form.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-offset-2 col-md-8 experience-form-page'>
+                <div class='row'>
+                    <form method='POST' action='' id='experience-form-input'>
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        {% for field in form %}
+                            {% if field.id_for_label == 'id_started_date' %}
+                                <div class='col-md-6'>
+                                {{ field }} 
+                                </div>
+                            {% elif field.id_for_label == 'id_end_date' %}
+                                <div class='col-md-6'>
+                                    {{ field }} 
+                                </div> 
+                            {% else %}
+                                <div class='col-md-12'>
+                                    {{ field }} 
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class='col-md-offset-10 col-md-2'>
+                            <input class='btn btn-block btn-primary' type='submit' value='Submit'>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+    {% comment %} {{ block.super }} {% endcomment %}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+    $(function(){
+        $("#id_started_date").datepicker();
+        $("#id_end_date").datepicker();
+    });
+    </script>
+{% endblock javascript %}

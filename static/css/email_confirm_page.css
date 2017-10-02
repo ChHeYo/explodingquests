@@ -1,0 +1,29 @@
+body {
+    padding-top: 50px;
+}
+
+.email-confirm-page {
+    background-color: #e2e2e2;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.email-confirm-page h3 {
+    padding-top: 0px;
+    margin-top: 0px;
+    padding-bottom: 10px;
+}
+
+.email-confirm-page .confirmed-email {
+    color: #4375c6;
+    pointer-events: none;
+}
+
+.email-confirm-page .verification-link {
+    color: #4375c6;
+}
+
+.verify-email {
+    margin-top: 10px;
+    margin-bottom: 25px;
+}

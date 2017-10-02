@@ -1,0 +1,28 @@
+body {
+    padding-top: 40px;
+}
+
+.already-uploaded {
+    width: 100px;
+    margin: 5px;
+}
+
+.thumbnail > .already-uploaded {
+    display: inline;
+}
+
+.thumbnail > form > .h5 {
+    margin-bottom: 30px;
+}
+
+.upload-thumbnail {
+    padding-top: 20px;
+}
+
+#id_quest_images {
+    display: none;
+}
+
+#uploaded_img {
+    width: 340px;
+}

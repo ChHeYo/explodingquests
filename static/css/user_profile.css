@@ -1,0 +1,76 @@
+body {
+    padding-top: 60px;
+}
+
+.basic-info-field {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 4px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+}
+
+.company-name {
+    margin-top: 0px;
+}
+
+.duration {
+    margin-right: 20px;
+}
+
+.each-experience-field {
+    padding-bottom: 3px;
+}
+
+.each-title {
+    font-weight: bold;
+    margin: 0px;
+}
+
+.experience-field {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.experience-field .glyphicon-remove {
+    position: absolute;
+    left: 90%;
+    top: 10%;
+}
+
+.experience-field h4 {
+    margin-bottom: 15px;
+    color: #5b5b5b;
+}
+
+.experience-field-main-heading {
+    margin-bottom: 15px;
+}
+
+.image-size {
+    width: 200px;
+    height: 200px;
+}
+
+.main-profile-page {
+    background-color: #e2e2e2;
+    padding-bottom: 15px;
+}
+
+.main-profile-page .btn-warning {
+    margin-bottom: 10px;
+}
+
+.thumbnail {
+    padding-left: 15px;
+    padding-top: 10px;
+}
+
+.profile-img {
+    margin-top: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+}

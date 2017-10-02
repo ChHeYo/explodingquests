@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} - My Profile
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/user_profile.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-offset-2 col-md-8 main-profile-page'>
+                <div class='row'>
+                    <div class='col-md-4'>
+                        <div class='profile-img'>
+                            <img class='image-size image-margin-top img-circle' src="{{ profile_img.image_url }}" alt='profile-image'>
+                        </div>
+                        <div class='basic-info-field justify-center'>
+                            {% if profile_img.preferred_name %}
+                                <p>{{ profile_img.preferred_name }}</p>
+                            {% else %}
+                                <p>{{ user.username }}</p>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'dashboard:work_experience' %}" class='btn btn-block btn-primary'>
+                            Add Experience
+                        </a>
+                    </div>
+                    <div class='col-md-8 experience-field'>
+                        <div class='row'>
+                            <div class='col-md-12'>
+                                <h4>Experience</h4>
+                            </div>
+                            {% for experience in experiences %}
+                                <div class='col-md-12'>    
+                                    <div class='thumbnail each-experience-field'>
+                                        <p class='each-title'>{{ experience.title|title }}
+                                            <a class='glyphicon glyphicon-edit' 
+                                            href="{% url 'dashboard:update_experience' experience.pk %}"
+                                            data-toggle="tooltip" data-placement="right" title="Edit"></a>
+                                            <a class='glyphicon glyphicon-remove red-fire' 
+                                            href="{% url 'dashboard:delete_experience' experience.pk %}"
+                                            data-toggle="tooltip" data-placement="right" title="Delete"></a> 
+                                        </p>
+                                        <p class='company-name'>{{ experience.company }}</p>
+                                        <p>{{ experience.description }}</p>
+                                        <p class='duration justify-right'>{{ experience.started_date }} - {{ experience.end_date }}</p>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class='col-md-12'>
+                                    <div class='thumbnail each-experience-field'>
+                                        <p>No Experience Listed</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+    </script>
+{% endblock javascript %}

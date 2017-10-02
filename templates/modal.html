@@ -1,0 +1,21 @@
+<div class="modal fade" id="{{ id }}" tabindex="-1" role="dialog" aria-labelledby="{{ label }}">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content justify-center">
+            <div class="modal-header title-left-padding">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="{{ label }}">{{ title }}</h5>
+            </div>
+            <div class="modal-footer"> 
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                    {% endif %}
+                <button class='btn btn-danger btn-block btn-margin' type="submit">{{ button }}</button>
+                </form>
+            </div> 
+        </div>
+    </div>
+</div>

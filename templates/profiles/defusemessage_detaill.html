@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} - Inbox
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/msg_detail.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class='row msg-detail-nav-row'>
+            <div class='col-xs-offset-9 col-xs-3 col-sm-offset-9 col-sm-3 col-md-offset-9 col-md-1'>
+                <a href="{% url 'dashboard:message_to_trash' pk=message.pk %}" class='btn btn-default btn-block'>
+                    <span class='glyphicon glyphicon-trash'></span>
+                </a>
+            </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-offset-2 col-md-8'>
+            <div class='message-detail-page'>
+                <p class='msg-subject'>{{ message.subject|title }}</p>
+                <!-- message sender is the current user -->
+                <!-- created box -->
+                {% if sender_email.user == request.user %}
+                    <p class='msg-sender'>Me 
+                        <span class='to-whom'>to {{ message.receiver }}</span>
+                    </p>
+                    <p class='quest-of-interest'>regarding  
+                        <a class='quest-link' href="{% url 'quests:quest_detail' slug=quest.slug %}">
+                            "{{ message.related_quest|title }}"
+                        </a>
+                    </p>
+                {% else %}
+                    <!-- message receiver is the current user -->
+                    <!-- inbox page -->
+                    <div class='sender-and-quest'>
+                        <img src="{{ sender_profile.image_url }}" class='img-circle sender-profile-img' />
+                        <p class='msg-sender'>{{ sender_email.user }}</p>
+                        <p class='creator-of'>- Quest Creater of 
+                            <a class='quest-link' href="{% url 'quests:quest_detail' slug=quest.slug %}">
+                                "{{ message.related_quest|title }}"
+                            </a>
+                        </p>
+                    </div>
+                    <p class='msg-sent-at'>{{ message.send_at|date:"m/d/y G:i" }}</p>
+                {% endif %}
+                <p class='msg-content'>{{ message.content|linebreaks|urlize }}</p>
+            </div>
+            <div class='date-at-the-bottom justify-right'>
+                <p class='msg-sent-at'>{{ message.send_at|date:"m/d/y G:i" }}</p>
+            </div>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-offset-2 col-md-8'>
+            {% for child in children %}
+                <div class='message-detail-page reply-list'>
+                    {% if sender_email.user == request.user %}
+                        <!-- reply reciepient is the current user -->
+                        <!-- my 'created_page'-->
+                        {% if child.sender != request.user %}
+                            <img src="{{ receiver_profile.image_url }}"
+                            class='img-circle reply-profile-img' />
+                            <p class='reply-sender-name'>{{ child.sender }}</p>
+                        {% endif %}
+                    {% elif sender_email.user != request.user %}
+                        <!-- my inbox's initial sender is a quest creator -->
+                        {% if child.sender != request.user %}
+                            <!-- if i am not the one who replied -->
+                            <img src="{{ sender_profile.image_url }}"
+                            class='img-circle reply-profile-img' />
+                            <p class='reply-sender-name'>{{ child.sender }}</p>
+                        {% endif %} 
+                    {% endif %}
+                </div>
+                {% if child.sender == request.user %}
+                    <div class='message-detail-page reply-content'>
+                {% else %}
+                    <div class='message-detail-page reply-content interested-person-reply'>
+                {% endif %}
+                    <p class='msg-content'>{{ child.content|linebreaks|urlize }}</p>
+                </div>
+                <div class='date-at-the-bottom justify-right'>
+                    <p class='msg-sent-at'>{{ child.send_at|date:"m/d/y G:i" }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <hr/>
+    <div class='row'>
+        {% if sender_email.user == request.user %}
+            <!-- if the sender of the current message is the currently loggined in user-->
+            <div class='col-md-offset-2 col-md-8'>
+                {% include "profiles/sent_reply.html" with form=reply_form action_url=create_url %}
+            </div>
+        {% else %}
+            <div class='col-md-offset-2 col-md-8'>
+                {% include "profiles/sent_reply.html" with form=reply_form action_url=interested_url %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+    </script>
+{% endblock javascript %}

@@ -1,0 +1,9 @@
+body {
+    padding-top: 40px;
+}
+
+.delete-experience-field {
+    background-color: #e2e2e2;
+    padding-bottom: 20px;
+    border-radius: 4px;
+}

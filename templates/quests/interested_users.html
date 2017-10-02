@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/interested_users.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            {% if request.user == selected_quest.user %}
+            <div class='col-md-12'>
+                <div class='thumbnail interested-users-heading'>
+                    <div class='justify-center'>
+                        <span class='interested-users-quest-title'>
+                            - {{ selected_quest.title|title }} -
+                        </span>
+                        <p>Defuse List</p>
+                    </div>
+                </div>
+            </div>
+            {% for user in interested_users %}
+                <a href="{% url 'quests:selected_user_profile' slug=selected_quest.slug username=user.username %}">
+                    <div class='col-xs-6 col-sm-6 col-md-2'>
+                        <div class='thumbnail interested-each-user'>
+                            {% with pro_img=user.profile_thumbnail %}
+                                <img class='image-size image-margin-top' src="{{ pro_img.image_url }}" alt='profile-image'>
+                            {% endwith %}
+                            <div class='caption justify-center'>
+                                <h5>{{ user.username }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+            {% else %}
+            <div class='col-md-12'>
+                <p>Not Accessible</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

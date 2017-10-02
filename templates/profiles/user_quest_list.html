@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/quest_collection.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class='row'>
+        <div class='col-md-12'>
+            <ul class="nav nav-pills" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#all" aria-controls="all" role="tab" data-toggle="tab">
+                        All ({{ count }})
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#defused" aria-controls="defused" role="tab" data-toggle="tab">
+                        Defused ({{ def_quest_count }})
+                    </a>
+                </li>
+            </ul>
+            <div class='col-md-12 quest-collection-page'>
+                <div class='row'>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="all">
+                        {% for li in list %}
+                            <a href="{{ li.get_absolute_url }}">
+                                <div class='col-md-3 justify-center quest-list'>
+                                    <div class='thumbnail'>
+                                        <div class='caption'>
+                                            <h5 class='quest-title'>{{ li.title|title }}</h5>
+                                            <p>{{ li.description|truncatewords:20 }}</p>
+                                            {% if li.reward_type == "MonetaryH" %}
+                                                <p class='reward-text'><span class='dollar-color'>$</span> {{ li.mon_reward }} / hour</p>
+                                            {% elif li.reward_type == "MonetaryF" %}
+                                                <p class='reward-text'>Flat - <span class='dollar-color'>$</span> {{ li.mon_reward }} </p>
+                                            {% elif li.reward_type == "Non-monetary" %}
+                                                <p class='reward-text'>{{ li.non_mon_rewards }}</p>
+                                            {% else %}
+                                                <p class='reward-text'>{{ li.reward_type }}</p>
+                                            {% endif %}
+                                            <p class='red-fire'>
+                                                {{ li.explosion_datetime }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <div class='col-md-12'>
+                                <p class='empty-message'>No item</p>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <div class="tab-pane" id="defused">
+                        {% for defused in def_quests %}
+                            <a href="{{ defused.get_absolute_url }}">
+                                <div class='col-md-3 justify-center quest-list'>
+                                    <div class='thumbnail'>
+                                        <div class='caption'>
+                                            <h5 class='quest-title'>{{ defused.title|title }}</h5>
+                                            <p>{{ defused.description|truncatewords:20 }}</p>
+                                            {% if defused.reward_type == "MonetaryH" %}
+                                                <p class='reward-text'><span class='dollar-color'>$</span>
+                                                    {{ defused.mon_reward }} / hour
+                                                </p>
+                                            {% elif li.reward_type == "MonetaryF" %}
+                                                <p class='reward-text'>Flat - <span class='dollar-color'>$</span>
+                                                    {{ defused.mon_reward }}
+                                                </p>
+                                            {% elif li.reward_type == "Non-monetary" %}
+                                                <p class='reward-text'>{{ defused.non_mon_rewards }}</p>
+                                            {% else %}
+                                                <p class='reward-text'>{{ defused.reward_type }}</p>
+                                            {% endif %}
+                                            <p class='red-fire'>
+                                                {{ defused.explosion_datetime }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% empty %}
+                            <div class='col-md-12'>
+                                <p class='empty-message'>No item</p>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

@@ -1,0 +1,7 @@
+<form method="POST" action="{% if action_url %}{{ action_url }}{% endif %}">
+    {% csrf_token %}
+    {{ form }}
+    <div class='send-reply justify-right'>
+        <input class='btn btn-primary' type='submit' value='send'>
+    </div>
+</form>

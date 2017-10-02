@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} - {{ quest.title }}
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/quest_image.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class='container'>
+    <div class='row'>
+        <div class='col-md-8'>
+            <div class='thumbnail justify-center upload-thumbnail'>
+                <form role="form" action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ image_form.as_p }}
+                    <label for='id_quest_images'>
+                        <img id='uploaded_img' src="{% static 'image/upload.png' %}"/>
+                    </label>
+                    <p class='h5'>Click to select an image to upload</p>
+                    <div class='justify-right'>
+                        <input class='btn btn-primary' type="submit" value="Submit" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class='col-md-4'>
+            <div class='thumbnail justify-center'>
+                <p class='h5'>Current Images</p>
+                <hr/>
+                {% for upload in uploads %}
+                    <img class='already-uploaded' src="{{ upload.quest_images.url }}"/>
+                    <a class='btn btn-danger' href="{% url 'quests:delete_quest_images' id=upload.id %}">Delete</a>
+                {% empty %}
+                    <p class='justify-center'>No image currently attached to the quest.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+    
+            reader.onload = function (e) {
+                $('#uploaded_img').attr('src', e.target.result);
+            }
+    
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    $("#id_quest_images").change(function(){
+        readURL(this);
+    });
+    </script>
+{% endblock javascript %}

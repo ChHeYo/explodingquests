@@ -1,0 +1,16 @@
+body {
+    padding-top: 30px;
+}
+
+.interested-users-heading {
+    padding-top: 15px;
+}
+
+.interested-users-quest-title {
+    color: #660000;
+    font-weight: bold;
+}
+
+.interested-each-user .caption{
+    padding: 0px;
+}

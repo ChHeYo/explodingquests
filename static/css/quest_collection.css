@@ -1,0 +1,20 @@
+.empty-message {
+    margin-bottom: 20px;
+}
+
+.quest-collection-page {
+    background-color: #e2e2e2;
+}
+
+.nav > li.active > a,
+.nav > li.active > a:hover,
+.nav > li.active > a:focus {
+    background-color: #e2e2e2;
+    color: black;
+    font-weight: bold;
+    border-radius: 0px;
+}
+
+.tab-pane {
+    padding-top: 20px;
+}

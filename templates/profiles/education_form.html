@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+{% block styelsheets %}
+    {{ block.super }}
+{% endblock styelsheets %}
+
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-offset-2 col-md-8'>
+            <form method='POST' action=''>
+                {{ form|bootstrap }}
+                <input class='btn btn-block btn-primary' type='submit' value='Submit'>
+            </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/dashboard.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class='row'>
+        <div class='col-md-12 justify-center'>
+            <p class='dashboard-main-heading h2'>Dashboard
+                {% if new %}
+                <p class='dashboard-notification'>{{ new }}</p>
+                {% else %}
+                {% endif %}
+            </p>
+            <div class='row'>
+                <div class='col-md-4'>
+                    <div class='thumbnail dashboard-thumbnail'>
+                        <div class='dashboard-image-show'>
+                            <img src='{{ profile_pic.image_url }}' alt='' class='img-circle dashboard-image'>
+                        </div>
+                        <div class='caption'>
+                            <p class='h5'>Profile</p>
+                            <p>View and edit your profile</p>
+                            <div class='dashboard-link'>
+                                <a href="{% url 'dashboard:my_profile' %}">
+                                    More Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-md-4'>
+                    <div class='thumbnail dashboard-thumbnail'>
+                        <img src="{% static 'image/chestbox.png' %}" class='img-circle'>
+                        <div class='caption'>
+                            <p class='h5'>Quest Collection</p>
+                            <p>View quests you've posted and defused</p>
+                            <div class='dashboard-link'>
+                                <a href="{% url 'dashboard:user_quest_list' %}">
+                                    View Collection
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-md-4'>
+                    <div class='thumbnail dashboard-thumbnail'>
+                        <img src="{% static 'image/inbox.png' %}" class='img-circle'>
+                        <div class='caption'>
+                            <p class='h5'>Inbox</p>
+                            <p>View messages you've sent and received</p>
+                            <div class='dashboard-link'>
+                                <a href="{% url 'dashboard:message_inbox' %}">
+                                    View Inbox 
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

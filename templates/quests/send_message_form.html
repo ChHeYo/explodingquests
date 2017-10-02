@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} 
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/send_message.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-offset-2 col-md-8 send-message-page'>
+                {% if request.user == quest.user %}
+                <form method='POST' action="" id='message-form'>
+                    {% csrf_token %}
+                    <div class='quest-title-field'>
+                        Quest: {{ quest|title }}
+                    </div>
+                    <div class='receiver-field'>
+                        Receiver: {{ receiver_email }}
+                    </div>
+                    {{ form }}
+                    <div class='justify-right'>
+                        <input class='btn btn-primary' type='submit' value='Send'>
+                    </div>
+                </form>
+                {% else %}
+                    <p>Not Accessible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        $("#message-form").submit(function( event ) {
+            alert('Sent Successfully');
+        });
+    </script>
+{% endblock javascript %}

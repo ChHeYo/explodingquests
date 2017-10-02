@@ -1,0 +1,113 @@
+body {
+    padding-top: 30px;
+}
+
+input[type="text"]:read-only {
+   background-color: white; 
+}
+
+.box {
+    padding: 8px;
+    border: 2px solid #dbdbdb;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.caption .reward-text {
+    color: green;
+}
+
+.caption .red-fire {
+    font-weight: bold;
+}
+
+.change-image-btn {
+    margin-top: 10px;
+}
+
+.green {
+    color: green;
+}
+
+.image-notice {
+    font-size: 10px;
+}
+
+.left-right-padding {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.name-info {
+    font-size: 11px;
+}
+
+.orange {
+    color: orange;
+}
+
+.password-change-button {
+    margin-top: 35px;
+}
+
+.post-btn {
+    margin-top: 5px;
+}
+
+.profile-picture {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.profile-thumbnail-size {
+    height: 200px;
+    width: 200px;
+}
+
+.quest-list-background {
+    padding: 20px;
+    padding-bottom: 10px;
+    background-color: #e2e2e2;
+}
+
+.quest-title {
+    margin-top: 0;
+}
+
+.settings_page {
+    background-color: white;
+    padding: 0px;
+    padding-bottom: 30px;
+    text-align: center; 
+}
+
+.settings_title {
+    text-align: left;
+    padding-left: 20px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: #f7f7f7;
+    border-bottom: 2px solid #dbdbdb;
+}
+
+.thumbnail .h5 {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.username-display {
+    background-color: white;
+    padding: 8px;
+    padding-left: 25px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.verification-padding {
+    padding-left: 10px;
+}
+
+#id_profile_thumbnail {
+    display: none;
+}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+{% load i18n %}
+
+{% block title %}
+    {{ block.super }} - Signup
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registration_page.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="container">
+        <div class='row'>
+            <div class='col-md-offset-4 col-md-4'>
+                <div class='signup-text'>
+                    {% comment %} <hr> {% endcomment %}
+                    <form class="signup" id="signup_form" method="POST" action="{% url 'account_signup' %}">
+                        {% csrf_token %}
+                        {{ form|bootstrap }}
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        <button class='btn btn-primary btn-block' type="submit">
+                            {% trans "Sign Up" %}</button>
+                    </form>
+                </div>
+                <div class='footnote'>
+                    <p class='no-margin'>
+                        {% blocktrans %}
+                            Already have an account? <a class='signinurl' href="{{ login_url }}">Log in</a>
+                        {% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

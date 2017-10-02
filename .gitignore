@@ -95,9 +95,3 @@ ENV/
 # Rope project settings
 .ropeproject
 
-*.pyc
-media/
-static/
-migrations/
-settings/
-templates/

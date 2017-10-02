@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} - Your Quests
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/profile_page.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class='container'>
+    <div class="row">
+        <div class='col-md-3 justify-center'>
+            <div class='thumbnail'>
+                <img class='image-size image-margin-top' src="{{ profile.image_url }}"/>
+                <div class='caption'>
+                    <h4>{{ user.username }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class='col-md-9'>
+            <div class='username-display'> 
+                <p class='h5 justify-left'>Quests by {{ user.username }}
+                    {% if verified %}
+                        <span class='glyphicon glyphicon-ok-sign green'
+                            data-toggle='tooltip' title='Verified'></span>
+                    {% else %}
+                        <span class='glyphicon glyphicon-question-sign orange'
+                            data-toggle='tooltip' title='Unverified'></span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class='thumbnail quest-list-background'>
+                <div class='row'>
+                    {% for quest in user_quests_list %}
+                    <a href="{{ quest.get_absolute_url }}">
+                        <div class='col-md-4 justify-center quest-list'>
+                            <div class='thumbnail selected-user-quest-list'>
+                                <div class='caption'>
+                                    <h5 class='quest-title'>{{ quest.title|title }}</h5>
+                                    <p>{{ quest.description|truncatewords:20 }}</p>
+                                    {% if quest.reward_type == "MonetaryH" %}
+                                        <p class='reward-text'><span class='dollar-color'>$</span> {{ quest.mon_reward }} / hour</p>
+                                    {% elif quest.reward_type == "MonetaryF" %}
+                                        <p class='reward-text'>Flat - <span class='dollar-color'>$</span> {{ quest.mon_reward }} </p>
+                                    {% elif quest.reward_type == "Non-monetary" %}
+                                        <p class='reward-text'>{{ quest.non_mon_rewards }}</p>
+                                    {% else %}
+                                        <p class='reward-text'>{{ quest.reward_type }}</p>
+                                    {% endif %}
+                                    <p class='red-fire'>
+                                        {{ quest.explosion_datetime|timeuntil }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                        <p>No item</p>
+                    {% endfor %} 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip(); 
+    });
+    </script>
+{% endblock javascript %}

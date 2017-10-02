@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} 
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/user_profile.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-md-offset-2 col-md-8 main-profile-page'>
+                <div class='row'>
+                    <div class='col-md-4'>
+                        <div class='profile-img'>
+                            <img class='image-size image-margin-top img-circle' src="{{ profile_img.image_url }}" alt='profile-image'>
+                        </div>
+                        <div class='basic-info-field justify-center'>
+                            <p>{{ user.username }}</p>
+                            <p>{{ email.email }}</p>
+                        </div>
+                        <div>
+                            <a class='btn btn-block btn-primary' href="{% url 'quests:send_message' quest.slug user.username %}">Send a Message</a>
+                        </div>
+                    </div>
+                    <div class='col-md-8 experience-field'>
+                        <div class='row'>
+                            <div class='col-md-12'>
+                                <h4>Experience</h4>
+                            </div>
+                            {% for experience in experiences %}
+                                <div class='col-md-12'>    
+                                    <div class='thumbnail each-experience-field'>
+                                        <p class='each-title'>{{ experience.title|title }}</p>
+                                        <p class='company-name'>{{ experience.company }}</p>
+                                        <p>{{ experience.description }}</p>
+                                        <p class='duration justify-right'>{{ experience.started_date }} - {{ experience.end_date }}</p>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class='col-md-12'>
+                                    <div class='thumbnail each-experience-field'>
+                                        <p>No Experience Listed</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

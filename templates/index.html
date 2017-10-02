@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class='jumbotron'>
+         <div class='container'>
+            <p class='h1'>The world is full of quests</p>
+            <p class='lead'>Get them before they explode!</p>
+         </div>
+    </div>
+    <div class='container'>
+        <div class='row'>
+            {% for quest in quest_list %}
+            <a href="{{ quest.get_absolute_url }}">
+                <div class='col-md-3 justify-center quest-list'>
+                    <div class='thumbnail quest-thumbnail'>
+                        <h5 class='justify-left quest-title'>{{ quest.title|title|truncatewords:5 }}</h5>
+                        {% if quest.uploads.first %}
+                            <img src="{{ quest.uploads.first.quest_images.url }}"/>
+                        {% else %}
+                            {% with pro_img=quest.user.profile_thumbnail %}
+                                <img class='image-size' src="{{ pro_img.image_url }}"/>
+                            {% endwith %} 
+                        {% endif %} 
+                        <div class='caption main-page-caption'>
+                            <p>{{ quest.description|truncatewords:10 }}</p>
+                            {% if quest.reward_type == "MonetaryH" %}
+                                <p class='display-reward'><span class='dollar-color'>$</span> {{ quest.mon_reward }} / hour</p>
+                            {% elif quest.reward_type == "MonetaryF" %}
+                                <p class='display-reward'><span class='dollar-color'>$</span> {{ quest.mon_reward }} flat</p>
+                            {% elif quest.reward_type == "Non-monetary" %}
+                                <p class='display-reward'>{{ quest.non_mon_rewards }}</p>
+                            {% else %}
+                                <p class='display-reward'>{{ quest.reward_type }}</p>
+                            {% endif %}
+                        </div>
+                        <p class='red-fire justify-right'>
+                            {{ quest.explosion_datetime|timeuntil }} left
+                        </p>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <div class='col-md-12 justify-center'>
+                <p>No Quest Found</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}
+

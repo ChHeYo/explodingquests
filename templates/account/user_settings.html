@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} - Settings
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/profile_page.css' %}"> 
+{% endblock stylesheets %}
+
+{% block content %}
+<div class='container'>
+    <div class='row'>
+        {% comment %} {% with current_user=request.user %} {% endcomment %}
+        {% if profile_user.is_authenticated %}
+        <div class='col-md-offset-3 col-md-6'>
+            <div class='settings_page'>
+                <div class='settings_title'>
+                    <p class='h4'>Settings</p>
+                </div>
+                <div class='profile-picture'>
+                    <form role="form" action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ profile_img_form }}
+                        <p class='image-notice'>Click the image to change profile picture</p>
+                        <label for='id_profile_thumbnail'>
+                            <img id='uploaded_profile_img' class='profile-thumbnail-size' src="{{ user_profile.image_url }}"/>
+                        </label>
+                        <div class='change-image-btn'> 
+                            <input class='btn btn-primary' type='submit' value='Click to save the update'>
+                        </div>
+                    </form>
+                </div>
+                <div class='row left-right-padding'>
+                    <div class='col-md-offset-2 col-md-8'>
+                        <p class='h5'>Username</p>
+                            <div class='box'>
+                                <span class='verification-padding'>{{ user.username|truncatechars:40 }}</span>
+                                {% if verification.verified %}
+                                    <span class='glyphicon glyphicon-ok-sign green'
+                                        data-toggle='tooltip' title='Verified'></span>
+                                {% else %}
+                                    <span class='glyphicon glyphicon-question-sign orange'
+                                        data-toggle='tooltip' title='Unverified'></span>
+                                {% endif %}
+                            </div>
+                        <p class='h5'>Email</p>
+                            <div class='box'>
+                                <span class='verification-padding'>{{ verification.email|truncatechars:40 }}</span>
+                                <a class="glyphicon glyphicon-edit" 
+                                data-toggle="tooltip" title="Edit Email"
+                                href="{% url 'account_email' %}"></a>
+                            </div>
+                        <p class='password-change-button'></p>
+                        <a class='btn btn-danger btn-block' href="{% url 'account_set_password' %}">
+                            Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% comment %} {% endwith %} {% endcomment %}
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+{% endblock footer %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip(); 
+    });
+    </script>
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+        
+                reader.onload = function (e) {
+                    $('#uploaded_profile_img').attr('src', e.target.result);
+                }
+        
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+    
+        $("#id_profile_thumbnail").change(function(){
+            readURL(this);
+        });
+    </script>
+{% endblock javascript %}

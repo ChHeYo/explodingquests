@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block title %}
+    {{ block.super }} - Delete
+{% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/delete_experience.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class='row'>
+        <div class='col-md-offset-4 col-md-4 justify-center delete-experience-field'>
+            <h3>{% trans "Delete This Experience" %}</h3>
+
+            <p>{% trans 'Are you sure?' %}</p>
+
+            <form method="post">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <button class='btn btn-danger btn-block btn-margin' type="submit">
+                {% trans 'Yes' %}
+            </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

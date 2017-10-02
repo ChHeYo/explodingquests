@@ -1,0 +1,60 @@
+body {
+    padding-top: 45px;
+}
+
+img {
+    width: 150px;
+}
+
+.dashboard-image {
+    width: 100%; 
+    vertical-align: middle;
+}
+
+.dashboard-image-show {
+    width: 150px;
+    height: 150px;
+    line-height: 150px;
+    margin: auto;
+}
+
+.dashboard-main-heading {
+    display: inline-block;
+}
+
+.dashboard-notification {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    color: white;
+    background: red;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.dashboard-link {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.dashboard-link > a {
+    font-weight: bold;
+    color: #d6d8db
+}
+
+.dashboard-link > a:hover {
+    color: black;
+}
+
+.dashboard-thumbnail {
+    padding-top: 40px;
+}
+
+.dashboard-thumbnail > .caption {
+    margin-top: 20px;
+}
+
+.h2 {
+    margin-bottom: 40px;
+}

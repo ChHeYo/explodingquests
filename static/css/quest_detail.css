@@ -1,0 +1,110 @@
+body {
+    padding-top: 30px;
+}
+
+a,
+a:hover,
+a:focus {
+    color: #4375c6;
+}
+
+.address {
+    margin-top: 10px;
+}
+
+.address-notice {
+    margin-top: 2px;
+    font-size: 10px;
+    margin-bottom: 20px;
+}
+
+.bold-title {
+    font-weight: bold;
+}
+
+.carousel-inner > .item > img {
+    margin: 0 auto;
+}
+
+.collapse-buttons {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.collapse-buttons-last {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.description-text {
+    margin-bottom: 30px;
+}
+
+.diffuse-button {
+    margin-bottom: 20px;
+}
+
+.explosion-text {
+    color: #a80b18;
+    font-weight: bold;
+}
+
+.image-margin-top {
+    margin-top: 20px;
+}
+
+.location {
+    overflow: auto;
+}
+
+.location > .address {
+    margin-bottom: 0px;
+}
+
+.location-thumbnail {
+    padding-top: 0px;
+    padding-bottom: 10px;
+    margin-bottom: 0px;
+}
+
+.location-thumbnail > hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.option-buttons {
+    margin-bottom: 20px;
+}
+
+.panel-body > img {
+    display: block;
+    margin: auto;
+}
+
+.quest-detail-page {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.reward-text {
+    font-weight: bold;
+    color: green;
+}
+/* 
+.thumbnail > hr {
+    margin: 0px;
+} */
+
+.user-buttons > .btn {
+    margin-bottom: 15px;
+}
+
+.show-location {
+    display: inline;
+}
+
+#diffuse-list {
+    margin-bottom: 10px;
+}
